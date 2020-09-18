@@ -190,7 +190,7 @@ using<-function(...) {
   }
   
   # simple models
-  m_ass_s = function(name = 'define', title = 'define', mo = m0, dat = d, fixed = NULL, categ = NULL, trans = NULL, spatial = TRUE, temporal = TRUE, PNG = TRUE, outdir = 'outdir'){
+  m_ass_s = function(name = 'define', title = 'define', binomial = FALSE, mo = m0, dat = d, fixed = NULL, categ = NULL, trans = NULL, spatial = TRUE, temporal = TRUE, PNG = TRUE, outdir = 'outdir'){
    
    if(PNG == TRUE){
     png(paste(outdir,name, ".png", sep=""), width=6,height=9,units="in",res=600)
@@ -201,6 +201,17 @@ using<-function(...) {
    
    scatter.smooth(fitted(mo),resid(mo),col='grey');abline(h=0, lty=2, col ='red')
    scatter.smooth(fitted(mo),sqrt(abs(resid(mo))), col='grey')
+   if(binomial == TRUE){
+      plot(fitted(mo), jitter(mo$model[,1], amount=0.05), xlab="Fitted values", ylab=paste("Probability of", names(mo$model)[1]), las=1, cex.lab=1.2, cex=0.8)
+      abline(0,1, lty=3)
+      t.breaks <- cut(fitted(m), quantile(fitted(m)))
+      means <- tapply(mo$model[,1], t.breaks, mean)
+      semean <- function(x) sd(x)/sqrt(length(x))
+      means.se <- tapply(mo$model[,1], t.breaks, semean)
+      points(quantile(fitted(m),c(0.125,0.375,0.625,0.875)), means, pch=16, col="orange")
+      segments(quantile(fitted(m),c(0.125,0.375,0.625,0.875)), means-2*means.se, quantile(fitted(m),c(0.125,0.375,0.625,0.875)), means+2*means.se,lwd=2, col="orange")
+   }
+
    qqnorm(resid(mo), main=list("Normal Q-Q Plot: residuals", cex=0.8),col='grey');qqline(resid(mo))
   
    # variables

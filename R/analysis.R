@@ -6,7 +6,7 @@
   nsim <- 5000 # number of simulations for predictions
   day_ = 'lightgrey'
   night_ = 'grey30'
-  
+
   source(here::here('R/prepare_data.R'))
 
 # 24h pattern
@@ -56,16 +56,30 @@
     lines(x=seq(min(xx$date_num),max(xx$date_num)),y=sunrs)
 
   # model lm
-    mb=lm(night_num~date_num,data=xx)
+    mb=lm(night_num ~ date_num, data=xx)
       summary(mb)
       summary(glht(mb))
       plot(allEffects(mb))
- 
+      m_ass_s( name = 'ModelAss_night_given_season_Gaussian',
+               title = 'lm(night_num ~ date_num, data=xx)',
+               mo = mb, dat = xx, 
+               fixed = c('date_num'), categ = NULL, trans = c('none'), 
+               spatial = FALSE, temporal = TRUE, 
+               PNG = TRUE, outdir = "Output/")
+
   # model glm
     mb=glm(night~date_num,data=xx,family="binomial")
     summary(mb)
     summary(glht(mb))
     plot(allEffects(mb))
+
+    m_ass_s( name = 'ModelAss_night_given_season_binary',
+               title = 'glm(night~date_num,data=xx,family="binomial"',
+               mo = mb, dat = xx, 
+               fixed = c('date_num'), categ = NULL, trans = c('none'), 
+               spatial = FALSE, temporal = TRUE, 
+               PNG = TRUE, outdir = "Output/")
+
     m = summary(mb)
     plot(exp(m$coefficients[1,1] + seq(min(xx$date_num),max(xx$date_num)) * m$coefficients[2,1])/
            (1+exp(m$coefficients[1,1] + seq(min(xx$date_num),max(xx$date_num)) * m$coefficients[2,1])) 

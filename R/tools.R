@@ -202,7 +202,7 @@ using<-function(...) {
    scatter.smooth(fitted(mo),resid(mo),col='grey');abline(h=0, lty=2, col ='red')
    scatter.smooth(fitted(mo),sqrt(abs(resid(mo))), col='grey')
    if(binomial == TRUE){
-      plot(fitted(mo), jitter(mo$model[,1], amount=0.05), xlab="Fitted values", ylab=paste("Probability of", names(mo$model)[1]), las=1, cex.lab=1.2, cex=0.8)
+      plot(fitted(mo), jitter(mo$model[,1], amount=0.05), xlab="Fitted values", ylab="Original values", las=1, cex.lab=1, cex=0.8,  main=list(paste("Probability of", names(mo$model)[1]),cex=0.8) )
       abline(0,1, lty=3)
       t.breaks <- cut(fitted(m), quantile(fitted(m)))
       means <- tapply(mo$model[,1], t.breaks, mean)
@@ -241,7 +241,7 @@ using<-function(...) {
           boxplot(resid(mo)~variable, medcol='grey', whiskcol='grey', staplecol='grey', boxcol='grey', outcol='grey');abline(h=0, lty=3, lwd=1, col = 'red')
          }
     }     
-          
+        
     if(temporal == TRUE){
         acf(resid(mo), type="p", main=list("Temporal autocorrelation:\npartial series residual",cex=0.8))
         }

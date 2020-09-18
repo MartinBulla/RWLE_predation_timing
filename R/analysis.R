@@ -4,6 +4,8 @@
   
   reml = TRUE # models fitted with REML (TRUE) or ML (FALSE)
   nsim <- 5000 # number of simulations for predictions
+  day_ = 'lightgrey'
+  night_ = 'grey30'
   
   source(here::here('R/prepare_data.R'))
 
@@ -11,7 +13,7 @@
   # histogram - ggplot 
     gg = ggplot(xx, aes(x = time_corr, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
       scale_x_continuous(expand = c(0, 0), lim = c(0,24), breaks = seq(0,24, by = 1), labels = c(0,"","2","","4","","6","","8","","10","","12","","14","","16","","18","","20","","22","","24"), name = "Time of day [hour]") + scale_y_continuous(expand = c(0, 0), name ="Predation events [count]")+
-      scale_fill_manual(values=c(day = 'lightgrey', night = 'darkgrey')) +
+      scale_fill_manual(values=c(day = day_, night = night_)) +
       theme_MB +
       theme(legend.title = element_blank())
     
@@ -41,7 +43,7 @@
       geom_line(aes(x = sunrs , y = date_num),ss, lty = 3, col = "grey") +
       geom_line(aes(x = sunss , y = date_num),ss, lty = 3, col = "grey") +
       scale_x_continuous(expand = c(0, 0), lim = c(0,24), breaks = seq(0,24, by = 1), labels = c(0,"","2","","4","","6","","8","","10","","12","","14","","16","","18","","20","","22","","24"), name = "Time of day [hour]") + scale_y_reverse(expand = c(0, 0), name ="Day in year", lim = c(200,50))+
-      scale_color_manual(values=c(day = 'lightgrey', night = 'grey30')) +
+      scale_color_manual(values=c(day = day_, night = night_)) +
       theme_MB +
       theme(legend.title = element_blank())
     

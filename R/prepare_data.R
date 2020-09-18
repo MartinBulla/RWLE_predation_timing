@@ -36,7 +36,7 @@ xx = x[grep("ok",x$remark)] # use only good data
 
         ss = data.table(date = dats, sunrs = sunrs, sunss = sunss)
         ss[,date_num := as.numeric(strftime(date,format="%j"))]
-        #ggplot(ss, aes(x = sunrs, y = date_num)) + geom_line()
+        #ggplot(ss, aes(x = sunrs, y = date_num)) + geom_path()
 
 # add whether nest was depredated during day/night   
     xx$night=as.factor(ifelse(xx$time_corr>= xx$sunrise_num & xx$time_corr <=xx$sunset_num,"day","night" ))

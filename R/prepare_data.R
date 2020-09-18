@@ -12,7 +12,7 @@ xx = x[grep("ok",x$remark)] # use only good data
 # correct predation time where RFID was runninng on a wrong time 
     xx$time_corr=xx$predation+xx$rfid_time_correction
     xx$time_corr[xx$time_corr>24]=xx$time_corr[xx$time_corr>24]-24 # NEMELO BY SE TADY ZMENIT I DATUM?
-
+    xx$time_corr_round=floor(xx$time_corr)
 # add sunset and sunrise
     koord=SpatialPoints(cbind(55.36449,24.83803), proj4string=CRS("+proj=longlat +datum=WGS84")) # center of the study area
 
@@ -34,5 +34,10 @@ xx = x[grep("ok",x$remark)] # use only good data
         sunrs=(as.numeric(sunrs) %% (24*3600))/3600 
         sunss=(as.numeric(sunss) %% (24*3600))/3600 
 
+        ss = data.table(date = dats, sunrs = sunrs, sunss = sunss)
+        ss[,date_num := as.numeric(strftime(date,format="%j"))]
+        #ggplot(ss, aes(x = sunrs, y = date_num)) + geom_line()
+
 # add whether nest was depredated during day/night   
     xx$night=as.factor(ifelse(xx$time_corr>= xx$sunrise_num & xx$time_corr <=xx$sunset_num,"day","night" ))
+    xx$night_num = ifelse(xx$night == 'day', 0, 1)

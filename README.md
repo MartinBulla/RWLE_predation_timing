@@ -1,13 +1,13 @@
-# Timing of predation events in Red-wattled lapwing *Vanellus indicus*
+## Timing of predation events in Red-wattled lapwing *Vanellus indicus*
 
 by Martin Sládeček and Martin Bulla
 
-## **Overview**
+### **Overview**
 
 Data, codes and outputs of the analyses.  
 
 
-## **Folders and files**
+### **Folders and files**
 
 [Data](https://github.com/MartinBulla/RWLA_predation_timing/tree/master/Data): data and metadata
 

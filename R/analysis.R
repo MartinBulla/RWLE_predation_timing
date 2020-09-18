@@ -40,8 +40,8 @@
 # Seasonal pattern
   # raw ggplot
     gg = ggplot() + geom_point(aes(y = date_num, x = time_corr, col = night), xx)  +
-      geom_line(aes(x = sunrs , y = date_num),ss, lty = 3, col = "grey") +
-      geom_line(aes(x = sunss , y = date_num),ss, lty = 3, col = "grey") +
+      geom_path(aes(x = sunrs , y = date_num),ss,  size = 0.25, col = "grey") +
+      geom_path(aes(x = sunss , y = date_num),ss,  size = 0.25, col = "grey") +
       scale_x_continuous(expand = c(0, 0), lim = c(0,24), breaks = seq(0,24, by = 1), labels = c(0,"","2","","4","","6","","8","","10","","12","","14","","16","","18","","20","","22","","24"), name = "Time of day [hour]") + scale_y_reverse(expand = c(0, 0), name ="Day in year", lim = c(200,50))+
       scale_color_manual(values=c(day = day_, night = night_)) +
       theme_MB +

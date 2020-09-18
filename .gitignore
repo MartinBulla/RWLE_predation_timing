@@ -12,6 +12,7 @@
 !*.sublime-project
 !LICENSE
 !LICENSE.txt
+!to_do.txt
 
 !/Data/
 !/R/

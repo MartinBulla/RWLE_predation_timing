@@ -9,7 +9,7 @@
 !version_log.md
 !.gitattributes
 !.gitignore
-!.sublime-project
+!*.sublime-project
 !LICENSE
 !LICENSE.txt
 

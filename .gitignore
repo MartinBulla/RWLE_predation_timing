@@ -13,10 +13,9 @@
 !LICENSE
 !LICENSE.txt
 
-
-!Data/
-!R/
-!Output/
+!/Data/
+!/R/
+!/Output/
 
 
 # Ignore everything in freeze (even if in Except)

@@ -41,3 +41,10 @@ xx = x[grep("ok",x$remark)] # use only good data
 # add whether nest was depredated during day/night   
     xx$night=as.factor(ifelse(xx$time_corr>= xx$sunrise_num & xx$time_corr <=xx$sunset_num,"day","night" ))
     xx$night_num = ifelse(xx$night == 'day', 0, 1)
+
+# add time from sunrise and aggregate data
+  xx$time_from_sunrise=xx$time_corr-xx$sunrise_num
+  xx$time_from_sunrise = ifelse(xx$time_from_sunrise>12,xx$time_from_sunrise-24, xx$time_from_sunrise)
+  
+  xx[, time_from_sunrise_r := round(time_from_sunrise)]
+  ts = xx[, .(cases = .N), by = 'time_from_sunrise_r']  

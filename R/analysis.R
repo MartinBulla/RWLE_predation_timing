@@ -38,19 +38,22 @@
                col = c("grey30","grey70"))# with day/night
   
 # sunrise pattern  
-  xx$time_from_sunrise=xx$time_corr-xx$sunrise_num
-  xx$time_from_sunrise = ifelse(xx$time_from_sunrise>12,xx$time_from_sunrise-24, xx$time_from_sunrise)
+  
+  # ggplot
+    summary(xx$time_from_sunrise)
+    gg = ggplot(xx, aes(x = time_from_sunrise, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
+          scale_x_continuous(expand = c(0, 0), lim = c(-12,12), breaks = seq(-12,12, by = 1), labels = c("-12", "", "-10", "", "-8", "", "-6", "", "-4", "", "-2", "", 0,"","2","","4","","6","","8","","10","","12"), name = "Time after sunrise [hour]") + scale_y_continuous(expand = c(0, 0), name ="Predation events [count]")+
+          scale_fill_manual(values=c(day = day_, night = night_)) +
+          theme_MB +
+          theme(legend.title = element_blank())
+        
+    ggsave(file = 'Output/histogram_after-sunrise.png', gg, dpi = 300, width = 7, height = 5, units = 'cm')
 
-  summary(xx$time_from_sunrise)
-  gg = ggplot(xx, aes(x = time_from_sunrise, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
-        scale_x_continuous(expand = c(0, 0), lim = c(-12,12), breaks = seq(-12,12, by = 1), labels = c("-12", "", "-10", "", "-8", "", "-6", "", "-4", "", "-2", "", 0,"","2","","4","","6","","8","","10","","12"), name = "Time after sunrise [hour]") + scale_y_continuous(expand = c(0, 0), name ="Predation events [count]")+
-        scale_fill_manual(values=c(day = day_, night = night_)) +
-        theme_MB +
-        theme(legend.title = element_blank())
-      
-  ggsave(file = 'Output/histogram_after-sunrise.png', gg, dpi = 300, width = 7, height = 5, units = 'cm')
-
-# Seasonal pattern
+  # model
+    m = lm(cases~poly(time_from_sunrise_r,2), ts)
+    summary(m)
+ 
+# seasonal pattern
   # raw ggplot horizontal
     gg = ggplot() + geom_point(aes(y = date_num, x = time_corr, col = night), xx)  +
       geom_path(aes(x = sunrs , y = date_num),ss,  size = 0.25, col = "grey") +

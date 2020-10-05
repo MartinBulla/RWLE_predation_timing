@@ -13,7 +13,7 @@ using<-function(...) {
 }
 
 # load/install packages
-  packages = c('arm','data.table', 'effects',  'ggplot2', 'ggthemes', 'glue',  'grid','gridExtra', 'here', 'htmlTable', 'lattice', 'lubridate', 'magrittr', 'maptools', 'multcomp', 'performance','plyr','raster','stringr','xlsx','zoo', 'gt', 'tidyverse', 'ggpubr')
+  packages = c('arm','data.table', 'effects',  'ggExtra', 'ggplot2', 'ggthemes', 'glue',  'grid','gridExtra', 'here', 'htmlTable', 'lattice', 'lubridate', 'magrittr', 'maptools', 'multcomp', 'performance','plyr','raster','stringr','xlsx','zoo', 'gt', 'tidyverse', 'ggpubr')
   sapply(packages, function(x) suppressPackageStartupMessages(using(x)) )
 
 # Set system time

@@ -48,3 +48,4 @@ xx = x[grep("ok",x$remark)] # use only good data
   
   xx[, time_from_sunrise_r := round(time_from_sunrise)]
   ts = xx[, .(cases = .N), by = 'time_from_sunrise_r']  
+  td = xx[, .(cases = .N), by = 'time_corr_round'] 

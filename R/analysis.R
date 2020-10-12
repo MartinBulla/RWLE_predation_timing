@@ -88,16 +88,25 @@
     
     ggsave(file = 'Output/season_time_horizontal.png', gg, dpi = 300, width = 7, height = 5, units = 'cm')
   # scatterplot - time vertical
+
+  huron <- data.frame(year = 1875:1972, level = as.vector(LakeHuron))
+h <- ggplot(huron, aes(year))
+
+h + geom_ribbon(aes(ymin=0, ymax=level))
+
+
     gg = ggplot() + 
+      geom_ribbon(aes(ymin = sunss , ymax = 24, x = date_num),ss, fill = "grey95")+ #geom_path(aes(y = sunss , x = date_num),ss,  size = 0.25, col = "grey") +
+      geom_area(aes(y =sunrs, x = date_num),ss,fill = "grey95") + #geom_path(aes(y = sunrs , x = date_num),ss,  size = 0.25, col = "grey") +
       geom_point(aes(x = date_num, y = time_corr, col = night), xx)  +
-      geom_path(aes(y = sunrs , x = date_num),ss,  size = 0.25, col = "grey") +
-      geom_path(aes(y = sunss , x = date_num),ss,  size = 0.25, col = "grey") +
       scale_y_reverse(expand = c(0, 0), lim = c(24,0), breaks = seq(0,24, by = 1), labels = c(0,"","2","","4","","6","","8","","10","","12","","14","","16","","18","","20","","22","","24"), name = "Time of day [hour]") + scale_x_continuous(expand = c(0, 0), name ="Day in year", lim = c(50,200))+
       scale_color_manual(values=c(day = day_, night = night_)) +
+      annotate("text", x=125, y=3, label= "night", size =1.5) + 
+      annotate("text", x =125, y=12, label = "day", size =1.5)+
       theme_MB +
       theme(legend.title = element_blank())
     
-    ggsave(file = 'Output/season_time-vertical.png', gg, dpi = 300, width = 7, height = 5, units = 'cm')
+    ggsave(file = 'Output/season_time-vertical_night-area.png', gg, dpi = 300, width = 7, height = 5, units = 'cm')
   # raw R-base plot
     plot(xx$time_corr~xx$date_num,cex=2,col=c("grey70","grey30")[xx$night],
          pch=20,xlab="day in year",ylab= "hour of the day")

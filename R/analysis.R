@@ -42,6 +42,21 @@
   
   # cor
     ggplot(td, aes(x = time_corr_round, y = cases)) + geom_point() + stat_smooth()    
+  
+  # model
+    tx = data.table(time_corr_round = seq(0,23,by =1))
+    tdx = merge(td,tx, all = TRUE)
+    tdx[is.na(cases), cases := 0]
+    tdx[,rad :=(2*pi*time_corr_round)/24]
+    tdx[ time_corr_round<12, day_part := 1]
+    tdx[ is.na(day_part), day_part := 2]
+
+    m = lm(cases~sin(rad)+cos(rad), tdx)
+    m = glm(cases~sin(rad)+cos(rad), family = 'poisson', tdx)
+    m = glm(cases~day_part, family = 'poisson', tdx)
+    summary(m)
+    plot(allEffects(m))    
+
 
 # sunrise pattern  
   
@@ -62,8 +77,20 @@
     ggplot(ts, aes(x = time_from_sunrise_r, y = cases)) + geom_point() + stat_smooth()
  
   # model
-    m = lm(cases~poly(time_from_sunrise_r,2), ts)
+    tx = data.table(time_from_sunrise_r = seq(-11,11,by =1))
+    tsx = merge(ts,tx, all = TRUE)
+    tsx[is.na(cases), cases := 0]
+    tsx[,rad :=(2*pi*time_from_sunrise_r)/24]
+
+    m = lm(cases~abs(time_from_sunrise_r), tsx)
+    m = glm(cases~abs(time_from_sunrise_r), family = 'poisson', tsx)
     summary(m)
+    plot(allEffects(m))
+    
+    m = lm(cases~sin(rad)+cos(rad), tsx)
+    m = glm(cases~sin(rad)+cos(rad), family = 'poisson', tsx)
+    summary(m)
+    plot(allEffects(m))    
  
 # seasonal pattern
   # histogram

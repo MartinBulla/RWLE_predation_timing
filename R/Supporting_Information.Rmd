@@ -1,13 +1,13 @@
 ---
-title: "Sample sizes for uniparental project including some biparental data"
-author: "Martin Bulla"
+title: "Suporting information for 'Dial nest predation pattern changes across season in a subtropical shorebird'"
+author: "Martin Bulla & Martin Sládeček"
 date: "`r Sys.time()`"
 output: 
     html_document: 
         toc: true
         toc_depth: 6
         code_folding: hide
-#bibliography: many_analysts.xml
+#bibliography: RWLA_predation_timing.xml
 ---
 
 ```{r setup, include=FALSE}

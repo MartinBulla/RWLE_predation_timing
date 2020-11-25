@@ -9,8 +9,8 @@
 
   source(here::here('R/prepare_data.R'))
 
-# generate model output
-  # (a) 24h circadian pattern
+# GENERATE MODEL OUTPUTS
+# (a) 24h circadian pattern
     tx = data.table(time_corr_round = seq(0,23,by =1))
     tdx = merge(td,tx, all = TRUE)
     tdx[is.na(cases), cases := 0]
@@ -40,8 +40,7 @@
 
     #summary(m)
     #plot(allEffects(m))  
-  
-  # (b) 24h sunrise pattern    
+# (b) 24h sunrise pattern    
     tx = data.table(time_from_sunrise_r = seq(-11,11,by =1))
     tsx = merge(ts,tx, all = TRUE)
     tsx[is.na(cases), cases := 0]
@@ -72,8 +71,7 @@
 
     #summary(m)
     #plot(allEffects(m))
-  
-  # (c) night predation over season
+# (c) night predation over season
   mb=glm(night_num ~ date_num, family="binomial", data=xx)
   c_night_bin = m_out(name = "(c) Season",  dep = "Night predation (0, 1)", fam = 'binomial', 
             N = nrow(xx), type = "glm",  model = mb,
@@ -95,8 +93,7 @@
                fixed = c('date_num'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
-      
-  # (d) night predation given midday temperature
+# (d) night predation given midday temperature
   tb=glm(night_num ~ midday_T, family="binomial", data=xx)
   d_night_bin = m_out(name = "(d) Midday T",  dep = "Night predation (0, 1)", fam = 'binomial', 
             N = nrow(xx), type = "glm",  model = tb,
@@ -118,8 +115,7 @@
                fixed = c('midday_T'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")    
-  
-  # (e) night predation given midday temperature and day in season
+# (e) night predation given midday temperature and day in season
   dtb=glm(night_num ~ midday_T + date_num, family="binomial", data=xx)
   e_night_bin = m_out(name = "(e) Midday T + date",  dep = "Night predation (0, 1)", fam = 'binomial', 
             N = nrow(xx), type = "glm",  model = dtb,
@@ -141,16 +137,6 @@
                fixed = c('midday_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")        
-   
-# combine and export
-  o = rbind(  a_24h_pois, a_24h_gaus,
-            b_sun_pois, b_sun_gaus,
-            c_night_bin, c_night_gaus,
-            d_night_bin, d_night_gaus,
-            e_night_bin, e_night_gaus
-          )  
-  fwrite(file = "./Output/Table.csv", o)
-
 # (f) midday T ~ date
     m = lm(midday_T~ date_num,data=xx)
     f_midTdate = m_out(name = "(f) Residual T",  dep = "Midday T", fam = 'Gaussian', 
@@ -162,7 +148,6 @@
                fixed = c('date_num'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
-
 # (g) night ~ reside temperature
   mx = lm(midday_T~ date_num,data=xx)
   xx$res_T = resid(mx)
@@ -188,11 +173,9 @@
                fixed = c('res_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")        
-
-
 # (h) date ~ middayT
     m = lm(date_num ~ midday_T,data=xx)
-    f_midTdate = m_out(name = "(h) Residual date",  dep = "Date", fam = 'Gaussian', 
+    h_dateMidT = m_out(name = "(h) Residual date",  dep = "Date", fam = 'Gaussian', 
             N = nrow(xx), type = "lm",  model = m,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
     m_ass_s( name = 'ModelAss_h_date_gaus',
@@ -201,7 +184,6 @@
                fixed = c('midday_T'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
-
 # (i) night ~ reside temperature
   my = lm(date_num ~ midday_T,data=xx)
   xx$res_D = resid(my)
@@ -226,3 +208,16 @@
                fixed = c('res_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")       
+
+# COMBINE AND EXPORT
+  o = rbind(  a_24h_pois, a_24h_gaus,
+            b_sun_pois, b_sun_gaus,
+            c_night_bin, c_night_gaus,
+            d_night_bin, d_night_gaus,
+            e_night_bin, e_night_gaus,
+            f_midTdate, 
+            g_night_bin, g_night_gaus,
+            h_dateMidT,
+            i_night_bin, i_night_gaus
+          )  
+  fwrite(file = "./Output/Table.csv", o)

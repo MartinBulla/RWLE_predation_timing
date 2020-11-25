@@ -18,8 +18,8 @@
       theme_MB +
       theme(legend.position = "none",
             legend.title = element_blank(),
-            plot.tag.position = c(0.97, 0.98),
-            plot.tag = element_text(size = 6, face = "bold") 
+            plot.tag.position = c(0.96, 0.97),
+            plot.tag = element_text(size = 6, face = "bold", colour = "grey30") 
             )
 # sunrise pattern  
   gb = 
@@ -33,8 +33,8 @@
             legend.key.width = unit(0.15, "cm"),
             axis.title.y = element_blank(),
             axis.text.y = element_blank(),  
-            plot.tag.position = c(0.97, 0.98),
-            plot.tag = element_text(size = 6, face = "bold") 
+            plot.tag.position = c(0.95, 0.97),
+            plot.tag = element_text(size = 6, face = "bold", colour = "grey30") 
             )
       legend = get_legend(gb)
       gbb = gb + theme(legend.position="none") 
@@ -45,72 +45,12 @@
     
   g <- cbind(gga,ggb, size = "last") 
 
-  grid.arrange(
-          arrangeGrob(g),
-          legend, ncol = 2, widths=c(5,0.5)
-          )
   ggALL = arrangeGrob(
           arrangeGrob(g),
           legend, ncol = 2, widths=c(5,0.5)
           )
 
   ggsave(file = 'Output/Fig_1_8cm-width.png', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
-
-  # did not work well
-  ggarrange(ga, 
-            gbb + theme(plot.margin = unit(c(1.5,1.75,0,0), "mm")), 
-            align = "hv")
-
-  ggALL = ggarrange(ga, gbb, legend, ncol=3,  widths=c(5, 5, 1))#,labels = 'AUTO', font.label =list(size = 6, face = "bold"), hjust = -25, vjust = 2.5)#, common.legend = TRUE, legend = "right")
-  
-  ggsave(file = 'Output/Fig_1.png', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
-
-
-  # test example
-  require(data.table); require(ggplot2); require(cowplot); require(ggpubr)
-  dat1 = data.table(hour = sample(1:24, 40, replace=T), 
-                    day_night = sample(c('night', 'day'), 40, replace = T))
-  dat2 = data.table(hour = sample(1:24, 40, replace=T), 
-                    day_night = sample(c('night', 'day'), 40, replace = T))
-  
-  g1 = ggplot(dat1, aes(x = hour, fill = day_night)) + geom_histogram() + ylim(0,5) + xlim(0,25) 
-  g2 = ggplot(dat2, aes(x = hour, fill = day_night)) + geom_histogram() + ylim(0,5) + xlim(0,25)
-
-  ggarrange(g1, g2, common.legend = TRUE, legend = "right", labels = "AUTO")
-
-  #Works well, but the second plot has the y-axis.
-
-  #If I suppress the y axis in B, B plot becomes larger. However, I want this plot to have the same plotting area (same length of x-axis as A)
-  ggarrange(g1, g2 + theme(axis.title.y = element_blank(),axis.text.y = element_blank()), 
-      common.legend = TRUE, legend = "right", labels = "AUTO")
-  
-  # horizontal align does not do the trick, but vertical align does. Yet there is a big gap between the two plots. Is there a way to bring them closer?
-  ggarrange(g1, g2 + theme(axis.title.y = element_blank(),axis.text.y = element_blank()), 
-      common.legend = TRUE, legend = "right", labels = "AUTO", align = "v")
-  
-
-  # I have attempted the same by adding the legend manually, but here again B is larger
-  legend_ = get_legend(g2)
-  g2b = g2 + theme(legend.position="none", axis.title.y = element_blank(),axis.text.y = element_blank()) 
-  g1b = g1 + theme(legend.position="none") 
-  ggarrange(g1b, g2b, legend_, ncol=3,  widths=c(5, 5, 3))
-
-  # here, I can fix that with align thus attempted to add the legend manually, but here again B is larger
-  ggarrange(ggarrange(g1b, g2b, align = "v"), legend_, ncol=2,  widths=c(7,2))
-
-
-    gg1 <- ggplotGrob(g1b)
-    gg2 <- ggplotGrob(g2b)
-    
-   g <- cbind(gg1,gg2, size = "last") 
-
-
-  grid.arrange(
-         arrangeGrob(g),
-          legend_, ncol = 2, widths=c(5,1)
-          )
-
-
 
 # sessionInfo()
   #R version 4.0.2 (2020-06-22)

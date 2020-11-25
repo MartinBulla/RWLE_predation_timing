@@ -17,4 +17,4 @@ Data, codes and outputs of the analyses.
 
 [R](https://github.com/MartinBulla/RWLA_predation_timing/tree/master/R): all r-scripts used in the analyses
 
-[Output](https://github.com/MartinBulla/RWLA_predation_timing/tree/master/Output): all results of the analyses (i.e. Tables and Figures) including Supplementary Tables and Figures, as well as model assumptions.
+[Output](Output/): all results of the analyses (i.e. Tables and Figures) including Supplementary Tables and Figures, as well as model assumptions.

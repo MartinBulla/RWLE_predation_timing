@@ -1,3 +1,22 @@
+# logger based surface temperature data
+a=fread("Data/temperatures.txt")
+a[, year:=substring(date,1,4)]
+a[, date_num:=as.numeric(strftime(date,format="%j"))]
+
+y=fread("Data/data_final.txt")
+y[, first_egg := as.POSIXct(first_egg)]
+y[, start_expo := as.POSIXct(start_expo)]
+y[, last_ok := as.POSIXct(last_ok)]
+y[, last_control := as.POSIXct(last_control)]
+y[, end_expo := as.POSIXct(end_expo)]
+y[, exposure := as.numeric(difftime(end_expo, start_expo, units = 'days'))]
+y[, mid_expo := mean(c(end_expo, start_expo)), by = nest]  
+y[, mid_j :=as.numeric(strftime(mid_expo,format="%j"))]
+y[, mid_age := as.numeric(difftime(mid_expo, first_egg, units = 'days'))]
+y[fate == 0, fate := 7]
+y[fate == 1, fate := 0]
+y[fate == 7, fate := 1]
+
 x=fread("Data/pred.csv")
     # column definitions
       # nest - unique nest ID
@@ -6,7 +25,7 @@ x=fread("Data/pred.csv")
       # predation - hour (numeric) of predation event
       # quality - 1 = good, 2 = partial predation events, after which the nest was abandoned, 3 = poor (CO TO ZNAMENA); for the analyses 1 and 2 were used 
       # ..._time_correction - CO PRESNE TO ZNAMENA reseni nesrovnalosti s posunem casu - nutno k "predation" pricist maximum z nich
-
+x = merge(x, y[,list(nest,temperature)], all.x =TRUE )
 xx = x[grep("ok",x$remark)] # use only good data
 
 # correct predation time where RFID was runninng on a wrong time 
@@ -41,6 +60,15 @@ xx = x[grep("ok",x$remark)] # use only good data
 # add whether nest was depredated during day/night   
     xx$night=as.factor(ifelse(xx$time_corr>= xx$sunrise_num & xx$time_corr <=xx$sunset_num,"day","night" ))
     xx$night_num = ifelse(xx$night == 'day', 0, 1)
+
+# add midday and midnight temperature
+    am = a[hr == 12, list(date,mean)]
+    setnames(am, 'mean', 'midday_T')
+    am[, date := as.POSIXct(date)]
+    xx = merge(xx,am, all.x = TRUE, by = 'date')
+    
+    # add missing temperature as average from the earliest previous and next day midday temperatures
+    xx[is.na(midday_T), midday_T := a[date_num %in% c(145,148) & hr == 12 & year == 2019, mean(mean)]]
 
 # add time from sunrise and aggregate data
   xx$time_from_sunrise=xx$time_corr-xx$sunrise_num

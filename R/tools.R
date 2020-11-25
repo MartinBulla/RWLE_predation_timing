@@ -13,7 +13,7 @@ using<-function(...) {
 }
 
 # load/install packages
-  packages = c('arm','data.table', 'effects',  'ggExtra', 'ggplot2', 'ggthemes', 'glue',  'grid','gridExtra', 'here', 'htmlTable', 'lattice', 'lubridate', 'magrittr', 'maptools', 'multcomp', 'performance','plyr','raster','stringr','xlsx','zoo', 'gt', 'tidyverse', 'ggpubr')
+  packages = c('arm','data.table', 'effects',  'ggExtra', 'ggplot2', 'ggthemes', 'glue',  'grid','gridExtra', 'here', 'htmlTable', 'lattice', 'lubridate', 'magrittr', 'maptools', 'multcomp', 'performance','plyr','raster','reshape2','stringr','xlsx','zoo', 'gt', 'tidyverse', 'ggpubr')
   sapply(packages, function(x) suppressPackageStartupMessages(using(x)) )
 
 # Set system time
@@ -52,69 +52,91 @@ using<-function(...) {
 
 
 # model output function
-  m_out = function(name = "define", model = m, round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA){
-  bsim <- sim(model, n.sim=nsim)  
+  m_out = function(model = m, type = "mixed", 
+    name = "define", dep = "define", fam = 'Gaussian',
+    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA){
+    
+    bsim = sim(model, n.sim=nsim)  
+    
     if(save_sim!=FALSE){save(bsim, file = paste0(save_sim, name,'.RData'))}
-   v = apply(bsim@fixef, 2, quantile, prob=c(0.5))
-   ci = apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)) 
-   oi=data.frame(model = name,type='fixed',effect=rownames(coef(summary(model))),estimate=v, lwr=ci[1,], upr=ci[2,])
+   
+    if(type != "mixed"){
+     v = apply(bsim@coef, 2, quantile, prob=c(0.5))
+     ci = apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)) 
+
+     oi=data.frame(type='fixed',effect=rownames(coef(summary(model))),estimate=v, lwr=ci[1,], upr=ci[2,])
       rownames(oi) = NULL
       oi$estimate_r=round(oi$estimate,round_)
       oi$lwr_r=round(oi$lwr,round_)
       oi$upr_r=round(oi$upr,round_)
-  oii=oi[c('model','type',"effect", "estimate_r","lwr_r",'upr_r')] 
-  
-   l=data.frame(summary(model)$varcor)
-   l = l[is.na(l$var2),]
-   l$var1 = ifelse(is.na(l$var1),"",l$var1)
-   l$pred = paste(l$grp,l$var1)
-
-   q050={}
-   q025={}
-   q975={}
-   pred={}
+     x=data.table(oi[c('type',"effect", "estimate_r","lwr_r",'upr_r')]) 
    
-   # variance of random effects
-   for (ran in names(bsim@ranef)) {
-     ran_type = l$var1[l$grp == ran]
-     for(i in ran_type){
-      q050=c(q050,quantile(apply(bsim@ranef[[ran]][,,ran_type], 1, var), prob=c(0.5)))
-      q025=c(q025,quantile(apply(bsim@ranef[[ran]][,,ran_type], 1, var), prob=c(0.025)))
-      q975=c(q975,quantile(apply(bsim@ranef[[ran]][,,ran_type], 1, var), prob=c(0.975)))
-      pred= c(pred,paste(ran, i))
-      }
-     }
-   # residual variance
-   q050=c(q050,quantile(bsim@sigma^2, prob=c(0.5)))
-   q025=c(q025,quantile(bsim@sigma^2, prob=c(0.025)))
-   q975=c(q975,quantile(bsim@sigma^2, prob=c(0.975)))
-   pred= c(pred,'Residual')
+    }else{
+     v = apply(bsim@fixef, 2, quantile, prob=c(0.5))
+     ci = apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)) 
+     oi=data.frame(type='fixed',effect=rownames(coef(summary(model))),estimate=v, lwr=ci[1,], upr=ci[2,])
+        rownames(oi) = NULL
+        oi$estimate_r=round(oi$estimate,round_)
+        oi$lwr_r=round(oi$lwr,round_)
+        oi$upr_r=round(oi$upr,round_)
+     oii=oi[c('type',"effect", "estimate_r","lwr_r",'upr_r')] 
+    
+     l=data.frame(summary(model)$varcor)
+     l = l[is.na(l$var2),]
+     l$var1 = ifelse(is.na(l$var1),"",l$var1)
+     l$pred = paste(l$grp,l$var1)
 
-   ri=data.frame(model = name,type='random %',effect=pred, estimate_r=round(100*q050/sum(q050)), lwr_r=round(100*q025/sum(q025)), upr_r=round(100*q975/sum(q975)))
-     rx = ri[ri$effect == 'Residual',]
-     if(rx$lwr_r>rx$upr_r){ri$lwr_r[ri$effect == 'Residual'] = rx$upr_r; ri$upr_r[ri$effect == 'Residual'] = rx$lwr_r}
-     ri$estimate_r = paste0(ri$estimate_r,'%')
-     ri$lwr_r = paste0(ri$lwr_r,'%')
-     ri$upr_r = paste0(ri$upr_r,'%')
-  
-  x = rbind(oii,ri)
-    x$N = ""
-    x$N[1] = N
-    if (aic == TRUE){   
-        x$AIC = ""
-        x$AIC[1]=AIC(update(model,REML = FALSE))
-        x$delta = ""
-        x$prob = ""
-        x$ER = ""
+     q050={}
+     q025={}
+     q975={}
+     pred={}
+     
+     # variance of random effects
+     for (ran in names(bsim@ranef)) {
+       ran_type = l$var1[l$grp == ran]
+       for(i in ran_type){
+        q050=c(q050,quantile(apply(bsim@ranef[[ran]][,,ran_type], 1, var), prob=c(0.5)))
+        q025=c(q025,quantile(apply(bsim@ranef[[ran]][,,ran_type], 1, var), prob=c(0.025)))
+        q975=c(q975,quantile(apply(bsim@ranef[[ran]][,,ran_type], 1, var), prob=c(0.975)))
+        pred= c(pred,paste(ran, i))
         }
-     x$R2_mar = ""
-     x$R2_con = ""
-     x$R2_mar [1]= invisible({capture.output({r2_nakagawa(model)$R2_marginal})})
-     x$R2_con [1]= invisible({capture.output({r2_nakagawa(model)$R2_conditional})})
-     #x$R2_mar [1]= r2_nakagawa(model)$R2_marginal
-     #x$R2_con [1]= r2_nakagawa(model)$R2_conditional
+       }
+     # residual variance
+     q050=c(q050,quantile(bsim@sigma^2, prob=c(0.5)))
+     q025=c(q025,quantile(bsim@sigma^2, prob=c(0.025)))
+     q975=c(q975,quantile(bsim@sigma^2, prob=c(0.975)))
+     pred= c(pred,'Residual')
+
+     ri=data.frame(model = name,type='random %',effect=pred, estimate_r=round(100*q050/sum(q050)), lwr_r=round(100*q025/sum(q025)), upr_r=round(100*q975/sum(q975)))
+       rx = ri[ri$effect == 'Residual',]
+       if(rx$lwr_r>rx$upr_r){ri$lwr_r[ri$effect == 'Residual'] = rx$upr_r; ri$upr_r[ri$effect == 'Residual'] = rx$lwr_r}
+       ri$estimate_r = paste0(ri$estimate_r,'%')
+       ri$lwr_r = paste0(ri$lwr_r,'%')
+       ri$upr_r = paste0(ri$upr_r,'%')
+    
+    x = data.table(rbind(oii,ri))
+    }
+    
+    x[1, model := name]                                                                
+    x[1, response := dep]                                                                
+    x[1, error_structure := fam]                                                                
+    x[1, N := N]                                                                
+
+    x=x[ , c('model', 'response', 'error_structure', 'N', 'type',"effect", "estimate_r","lwr_r",'upr_r')] 
+
+    if (aic == TRUE){   
+        x[1, AIC := AIC(update(model,REML = FALSE))] 
+        }
+    if(type == "mixed"){
+      x[1, R2_mar := invisible({capture.output({r2_nakagawa(model)$R2_marginal})})]
+      x[1, R2_con := invisible({capture.output({r2_nakagawa(model)$R2_conditional})})]
+     }
+    x[is.na(x)] = ""
     return(x)
   } 
+
+  #summary(m)$r.squared
+  #summary(m)$adj.r.squared
 # model assumption functions
   # mixed models
   m_ass = function(name = 'define', mo = m0, dat = d, fixed = NULL, categ = NULL, trans = NULL, spatial = TRUE, temporal = TRUE, PNG = TRUE, outdir = 'outdir'){
@@ -204,12 +226,12 @@ using<-function(...) {
    if(binomial == TRUE){
       plot(fitted(mo), jitter(mo$model[,1], amount=0.05), xlab="Fitted values", ylab="Original values", las=1, cex.lab=1, cex=0.8,  main=list(paste("Probability of", names(mo$model)[1]),cex=0.8) )
       abline(0,1, lty=3)
-      t.breaks <- cut(fitted(m), quantile(fitted(m)))
+      t.breaks <- cut(fitted(mo), quantile(fitted(mo)))
       means <- tapply(mo$model[,1], t.breaks, mean)
       semean <- function(x) sd(x)/sqrt(length(x))
       means.se <- tapply(mo$model[,1], t.breaks, semean)
-      points(quantile(fitted(m),c(0.125,0.375,0.625,0.875)), means, pch=16, col="orange")
-      segments(quantile(fitted(m),c(0.125,0.375,0.625,0.875)), means-2*means.se, quantile(fitted(m),c(0.125,0.375,0.625,0.875)), means+2*means.se,lwd=2, col="orange")
+      points(quantile(fitted(mo),c(0.125,0.375,0.625,0.875)), means, pch=16, col="orange")
+      segments(quantile(fitted(mo),c(0.125,0.375,0.625,0.875)), means-2*means.se, quantile(fitted(mo),c(0.125,0.375,0.625,0.875)), means+2*means.se,lwd=2, col="orange")
    }
 
    qqnorm(resid(mo), main=list("Normal Q-Q Plot: residuals", cex=0.8),col='grey');qqline(resid(mo))
@@ -260,4 +282,18 @@ using<-function(...) {
    mtext(title, side = 3, line = -1, cex=0.7,outer = TRUE)
   if(PNG==TRUE){dev.off()}
   }  
+
+# Logistic exposure link function
+  logexp <- function(days = 1)
+  {
+      linkfun <- function(mu) qlogis(mu^(1/days))
+      linkinv <- function(eta) plogis(eta)^days
+      mu.eta <- function(eta) days * plogis(eta)^(days-1) *
+        .Call(stats:::C_logit_mu_eta, eta, PACKAGE = "stats")
+      valideta <- function(eta) TRUE
+      link <- paste("logexp(", days, ")", sep="")
+      structure(list(linkfun = linkfun, linkinv = linkinv,
+                     mu.eta = mu.eta, valideta = valideta, name = link),
+                class = "link-glm")
+  }
 

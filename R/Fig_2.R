@@ -161,12 +161,12 @@
     ga + theme(plot.margin = unit(c(1.5,1.75,0.3,2), "mm")),  
     gbb + theme(plot.margin = unit(c(1.5,1.75,0.3,2), "mm")), 
     gc + theme(plot.margin = unit(c(1.5,1.75,0,2), "mm")),
-    nrow=3, heights=c(1, 4, 4),  align = 'v', 
-    labels = 'AUTO', font.label =list(size = 6, face = "bold"), hjust = -7.25, vjust = 2.5)
-  ggL = ggarrange(blank, legend, blank, nrow=3, heights=c(1, 4, 4))
-  ggAll = ggarrange(ggA, ggL, ncol=2, widths=c(4, 0.3))
+    nrow=3, heights=c(1, 4, 4.45),  align = 'v', 
+    labels = c('(a)','(b)', '(c)'), font.label =list(size = 6, face = "bold", color = "grey30"), hjust = c(-4.3, -4.1, -4.3), vjust = 2.5)
+  ggL = ggarrange(blank, legend, blank, nrow=3, heights=c(1, 4, 4.45))
+  ggAll = ggarrange(ggA, ggL, ncol=2, widths=c(4, 0.45))
 
-  ggsave(file = 'Output/Fig_2.png', ggAll, dpi = 300, width = 7, height = 12, units = 'cm')
+  ggsave(file = 'Output/Fig_2_7cm-width.png', ggAll, dpi = 300, width = 7, height = 12.5, units = 'cm')
     #ggExtra::ggMarginal(gg, type = "histogram")#, groupColour = TRUE)
 
 # sessionInfo()

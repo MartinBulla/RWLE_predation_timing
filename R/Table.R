@@ -73,7 +73,7 @@
     #plot(allEffects(m))
 # (c) night predation over season
   mb=glm(night_num ~ date_num, family="binomial", data=xx)
-  #mbp =glm(night_num ~ poly(date_num,2), family="binomial", data=xx)
+  mbp =glm(night_num ~ poly(date_num,2), family="binomial", data=xx)
   c_night_bin = m_out(name = "(c) Season",  dep = "Night predation (0, 1)", fam = 'binomial', 
             N = nrow(xx), type = "glm",  model = mb,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
@@ -96,6 +96,7 @@
                PNG = TRUE, outdir = "Output/ModelAss/")
 # (d) night predation given midday temperature
   tb=glm(night_num ~ midday_T, family="binomial", data=xx)
+  tbp  =glm(night_num ~ poly(midday_T,2), family="binomial", data=xx)
   d_night_bin = m_out(name = "(d) Midday T",  dep = "Night predation (0, 1)", fam = 'binomial', 
             N = nrow(xx), type = "glm",  model = tb,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
@@ -222,6 +223,20 @@
             i_night_bin, i_night_gaus
           )  
   fwrite(file = "./Output/Table.csv", o)
+
+# AICc
+ require(MuMIn)
+ aic = data.table(model = rownames(AICc(mb, mbp, tb, tbp, dtb, mbrd, mbrt)), predictors = c('date', 'poly date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mb, mbp, tb, tbp, dtb, mbrd, mbrt))
+ aic[, deltaAICc := AICc-min(AICc)]
+ aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
+ aic[, ER := round(max(prob)/prob, 2)]
+ aic[order(deltaAICc)]
+
+ aic = data.table(model = rownames(AICc(mb, tb, tbp, dtb, mbrd, mbrt)), predictors = c('date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mb, tb, tbp, dtb, mbrd, mbrt))
+ aic[, deltaAICc := AICc-min(AICc)]
+ aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
+ aic[, ER := round(max(prob)/prob, 2)]
+ aic[order(deltaAICc)]
 
 # sessionInfo()
  #R version 4.0.2 (2020-06-22)

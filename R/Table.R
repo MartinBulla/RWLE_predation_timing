@@ -85,6 +85,7 @@
                PNG = TRUE, outdir = "Output/ModelAss/")
 
   mg=lm(night_num ~ date_num, data=xx)
+  mgp = lm(night_num ~ poly(date_num,2), data=xx)
   c_night_gaus = m_out(name = "(c) Season",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
             N = nrow(xx), type = "lm",  model = mg,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
@@ -108,6 +109,7 @@
                PNG = TRUE, outdir = "Output/ModelAss/")
 
   tg=lm(night_num ~ midday_T, data=xx)
+  tgp = lm(night_num ~ poly(midday_T,2), data=xx)
   d_night_gaus = m_out(name = "(d) Midday T",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
             N = nrow(xx), type = "lm",  model = tg,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
@@ -233,6 +235,18 @@
  aic[order(deltaAICc)]
 
  aic = data.table(model = rownames(AICc(mb, tb, tbp, dtb, mbrd, mbrt)), predictors = c('date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mb, tb, tbp, dtb, mbrd, mbrt))
+ aic[, deltaAICc := AICc-min(AICc)]
+ aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
+ aic[, ER := round(max(prob)/prob, 2)]
+ aic[order(deltaAICc)]
+
+ aic = data.table(model = rownames(AICc(mg, mgp, tg, tgp, dtg, mgrd, mgrt)), predictors = c('date', 'poly date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mg, mgp, tg, tgp, dtg, mgrd, mgrt))
+ aic[, deltaAICc := AICc-min(AICc)]
+ aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
+ aic[, ER := round(max(prob)/prob, 2)]
+ aic[order(deltaAICc)]
+
+ aic = data.table(model = rownames(AICc(mg, tg, tgp, dtg, mgrd, mgrt)), predictors = c('date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mg, tg, tgp, dtg, mgrd, mgrt))
  aic[, deltaAICc := AICc-min(AICc)]
  aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
  aic[, ER := round(max(prob)/prob, 2)]

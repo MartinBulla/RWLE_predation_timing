@@ -25,8 +25,8 @@
   source(here::here('R/prepare_data.R'))
 
   # dataset with dummy variable, to get the temperature-legend for a full range of temperature data
-    xx1 = xx[,.(date_num, time_corr, temperature)]
-    xx2 = data.frame(date_num = c(1,1), time_corr = c(12,12), temperature = c(min(a[, mean]),max(a[, mean]))   ) 
+    xx1 = xx[,.(date_num, time, temperature)]
+    xx2 = data.frame(date_num = c(1,1), time = c(12,12), temperature = c(min(a[, mean]),max(a[, mean]))   ) 
     xxx = rbind(xx1,xx2)
 
   # dataset for isotherm
@@ -75,11 +75,12 @@
     # calculate predicted values and creditability intervals
     newD$pred <-plogis(X%*%v) 
     predmatrix <- matrix(nrow=nrow(newD), ncol=nsim)
-    for(i in 1:nsim) predmatrix[,i] <- plogis(X%*%bsim@coef[i,])
+    for(i in 1:nsim) {predmatrix[,i] <- plogis(X%*%bsim@coef[i,])}
                     predmatrix[predmatrix < 0] <- 0
                     newD$lwr <- apply(predmatrix, 1, quantile, prob=0.025)
                     newD$upr <- apply(predmatrix, 1, quantile, prob=0.975)
                     #newD$pred <- apply(predmatrix, 1, quantile, prob=0.5)
+                 
     pp=newD   
 
 # (a) distribution of predation events across season
@@ -110,8 +111,8 @@
     stat_contour(data = meanTL, aes(x = date_num, y = hr, z = meanT),  breaks = 45, size = 0.25, colour = isotherm45) +
     stat_contour(data = meanTL, aes(x = date_num, y = hr, z = meanT),  breaks = 40, size = 0.25, colour = isotherm40) +
     stat_contour(data = meanTL, aes(x = date_num, y = hr, z = meanT),  breaks = 35, size = 0.25, colour = isotherm35) +
-    #geom_point(aes(x = date_num, y = time_corr, col = temperature, fill = temperature), xxx)  +
-    geom_point(aes(x = date_num, y = time_corr,  fill = temperature), data = xxx, shape=21, col = point_out) +
+    #geom_point(aes(x = date_num, y = time, col = temperature, fill = temperature), xxx)  +
+    geom_point(aes(x = date_num, y = time,  fill = temperature), data = xxx, shape=21, col = point_out) +
     scale_y_reverse(expand = c(0, 0), lim = c(24,0), breaks = seq(0,24, by = 1), labels = c(0,"","2","","4","","6","","8","","10","","12","","14","","16","","18","","20","","22","","24"), name = "Time of predation") + 
     scale_x_continuous(expand = c(0, 0), name ="Day in year")+
     coord_cartesian(xlim = c(50,200), clip = 'off') + 

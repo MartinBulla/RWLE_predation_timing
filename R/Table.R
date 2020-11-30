@@ -11,10 +11,10 @@
 
 # GENERATE MODEL OUTPUTS
 # (a) 24h circadian pattern
-    tx = data.table(time_corr_round = seq(0,23,by =1))
+    tx = data.table(time_round = seq(0,23,by =1))
     tdx = merge(td,tx, all = TRUE)
     tdx[is.na(cases), cases := 0]
-    tdx[,rad :=(2*pi*time_corr_round)/24]
+    tdx[,rad :=(2*pi*time_round)/24]
 
     m = glm(cases~sin(rad)+cos(rad), family = 'poisson', tdx)
     a_24h_pois = m_out(name = "(a) Time of day",  dep = "Predation per hour", fam = 'Poisson', 

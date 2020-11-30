@@ -11,7 +11,7 @@
 
 # 24h pattern
   ga = 
-    ggplot(xx, aes(x = time, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
+    ggplot(x, aes(x = time, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
       scale_x_continuous(expand = c(0, 0), lim = c(0,24), breaks = seq(0,24, by = 1), labels = c(0,"","","","4","","","","8","","","","12","","","","16","","","","20","","","","24"), name = "Time of day\n[hour]") + scale_y_continuous(expand = c(0, 0), name ="Predation\n[count]")+
       scale_fill_manual(values=c(day = day_, night = night_)) + 
       labs(tag = "(a)") +
@@ -23,7 +23,7 @@
             )
 # sunrise pattern  
   gb = 
-    ggplot(xx, aes(x = time_from_sunrise, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
+    ggplot(x, aes(x = time_from_sunrise, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
           scale_x_continuous(expand = c(0, 0), lim = c(-12,12), breaks = seq(-12,12, by = 1), labels = c("-12", "", "", "", "-8", "", "", "", "-4", "", "", "", 0,"","","","4","","","","8","","","","12"), name = "Time relative to sunrise\n[hour]") + scale_y_continuous(expand = c(0, 0), name ="Predation\n[count]")+
           scale_fill_manual(values=c(day = day_, night = night_)) + labs(tag = "(b)") +
       theme_MB +

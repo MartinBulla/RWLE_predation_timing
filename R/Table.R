@@ -72,143 +72,143 @@
     #summary(m)
     #plot(allEffects(m))
 # (c) night predation over season
-  mb=glm(night_num ~ date_num, family="binomial", data=xx)
-  mbp =glm(night_num ~ poly(date_num,2), family="binomial", data=xx)
+  mb=glm(night_num ~ date_num, family="binomial", data=x)
+  mbp =glm(night_num ~ poly(date_num,2), family="binomial", data=x)
   c_night_bin = m_out(name = "(c) Season",  dep = "Night predation (0, 1)", fam = 'binomial', 
-            N = nrow(xx), type = "glm",  model = mb,
+            N = nrow(x), type = "glm",  model = mb,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_c_night-season_bin',
-               title = 'glm(night_num ~ date_num, family = "binomial", xx)',
-               binomial = TRUE, mo = mb, dat = xx, 
+               title = 'glm(night_num ~ date_num, family = "binomial", x)',
+               binomial = TRUE, mo = mb, dat = x, 
                fixed = c('date_num'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 
-  mg=lm(night_num ~ date_num, data=xx)
-  mgp = lm(night_num ~ poly(date_num,2), data=xx)
+  mg=lm(night_num ~ date_num, data=x)
+  mgp = lm(night_num ~ poly(date_num,2), data=x)
   c_night_gaus = m_out(name = "(c) Season",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = mg,
+            N = nrow(x), type = "lm",  model = mg,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_c_night-season_gaus',
-               title = 'lm(night_num ~ date_num, xx)',
-               binomial = TRUE, mo = mg, dat = xx, 
+               title = 'lm(night_num ~ date_num, x)',
+               binomial = TRUE, mo = mg, dat = x, 
                fixed = c('date_num'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 # (d) night predation given midday temperature
-  tb=glm(night_num ~ midday_T, family="binomial", data=xx)
-  tbp  =glm(night_num ~ poly(midday_T,2), family="binomial", data=xx)
+  tb=glm(night_num ~ midday_T, family="binomial", data=x)
+  tbp  =glm(night_num ~ poly(midday_T,2), family="binomial", data=x)
   d_night_bin = m_out(name = "(d) Midday T",  dep = "Night predation (0, 1)", fam = 'binomial', 
-            N = nrow(xx), type = "glm",  model = tb,
+            N = nrow(x), type = "glm",  model = tb,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_d_night-middayT_bin',
-               title = 'glm(night_num ~ midday_T, family = "binomial", xx)',
-               binomial = TRUE, mo = tb, dat = xx, 
+               title = 'glm(night_num ~ midday_T, family = "binomial", x)',
+               binomial = TRUE, mo = tb, dat = x, 
                fixed = c('midday_T'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 
-  tg=lm(night_num ~ midday_T, data=xx)
-  tgp = lm(night_num ~ poly(midday_T,2), data=xx)
+  tg=lm(night_num ~ midday_T, data=x)
+  tgp = lm(night_num ~ poly(midday_T,2), data=x)
   d_night_gaus = m_out(name = "(d) Midday T",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = tg,
+            N = nrow(x), type = "lm",  model = tg,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_d_night-middayT_gaus',
-               title = 'lm(night_num ~ midday_T, xx)',
-               binomial = TRUE, mo = tg, dat = xx, 
+               title = 'lm(night_num ~ midday_T, x)',
+               binomial = TRUE, mo = tg, dat = x, 
                fixed = c('midday_T'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")    
 # (e) night predation given midday temperature and day in season
-  dtb=glm(night_num ~ midday_T + date_num, family="binomial", data=xx)
+  dtb=glm(night_num ~ midday_T + date_num, family="binomial", data=x)
   e_night_bin = m_out(name = "(e) Midday T + date",  dep = "Night predation (0, 1)", fam = 'binomial', 
-            N = nrow(xx), type = "glm",  model = dtb,
+            N = nrow(x), type = "glm",  model = dtb,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_e_night-middayT-date_bin',
-               title = 'glm(night_num ~ midday_T + date_num, family = "binomial", xx)',
-               binomial = TRUE, mo = dtb, dat = xx, 
+               title = 'glm(night_num ~ midday_T + date_num, family = "binomial", x)',
+               binomial = TRUE, mo = dtb, dat = x, 
                fixed = c('midday_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 
-  dtg=lm(night_num ~ midday_T + date_num, data=xx)
+  dtg=lm(night_num ~ midday_T + date_num, data=x)
   e_night_gaus = m_out(name = "(e) Midday T + date",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = dtg,
+            N = nrow(x), type = "lm",  model = dtg,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_e_night-middayT-date_gaus',
-               title = 'lm(night_num ~ midday_T + date_num, xx)',
-               binomial = TRUE, mo = dtg, dat = xx, 
+               title = 'lm(night_num ~ midday_T + date_num, x)',
+               binomial = TRUE, mo = dtg, dat = x, 
                fixed = c('midday_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")        
 # (f) midday T ~ date
-    m = lm(midday_T~ date_num,data=xx)
+    m = lm(midday_T~ date_num,data=x)
     f_midTdate = m_out(name = "(f) Residual T",  dep = "Midday T", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = m,
+            N = nrow(x), type = "lm",  model = m,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
     m_ass_s( name = 'ModelAss_f_midTdate_gaus',
-               title = 'lm(midday_T~ date_num,data=xx)',
-               binomial = TRUE, mo = m, dat = xx, 
+               title = 'lm(midday_T~ date_num,data=x)',
+               binomial = TRUE, mo = m, dat = x, 
                fixed = c('date_num'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 # (g) night ~ reside temperature
-  mx = lm(midday_T~ date_num,data=xx)
-  xx$res_T = resid(mx)
-  mbrd=glm(night_num ~ res_T + date_num, data = xx, family="binomial")
+  mx = lm(midday_T~ date_num,data=x)
+  x$res_T = resid(mx)
+  mbrd=glm(night_num ~ res_T + date_num, data = x, family="binomial")
 
   g_night_bin = m_out(name = "(g) res T + date",  dep = "Night predation (0, 1)", fam = 'binomial', 
-            N = nrow(xx), type = "glm",  model = mbrd,
+            N = nrow(x), type = "glm",  model = mbrd,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_g_night-resT-date_bin',
-               title = 'glm(night_num ~ res_T + date_num, data = xx, family="binomial")',
-               binomial = TRUE, mo = mbrd, dat = xx, 
+               title = 'glm(night_num ~ res_T + date_num, data = x, family="binomial")',
+               binomial = TRUE, mo = mbrd, dat = x, 
                fixed = c('res_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 
-  mgrd=lm(night_num ~ res_T + date_num, data = xx)
+  mgrd=lm(night_num ~ res_T + date_num, data = x)
   g_night_gaus = m_out(name = "(g) Midday T + date",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = mgrd,
+            N = nrow(x), type = "lm",  model = mgrd,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_g_night-resT-date_gaus',
-               title = 'lm(night_num ~ res_T + date_num, data = xx)',
-               binomial = TRUE, mo = mgrd, dat = xx, 
+               title = 'lm(night_num ~ res_T + date_num, data = x)',
+               binomial = TRUE, mo = mgrd, dat = x, 
                fixed = c('res_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")        
 # (h) date ~ middayT
-    m = lm(date_num ~ midday_T,data=xx)
+    m = lm(date_num ~ midday_T,data=x)
     h_dateMidT = m_out(name = "(h) Residual date",  dep = "Date", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = m,
+            N = nrow(x), type = "lm",  model = m,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
     m_ass_s( name = 'ModelAss_h_date_gaus',
-               title = 'lm(date_num~ midday_T,data=xx)',
-               binomial = TRUE, mo = m, dat = xx, 
+               title = 'lm(date_num~ midday_T,data=x)',
+               binomial = TRUE, mo = m, dat = x, 
                fixed = c('midday_T'), categ = NULL, trans = c('none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 # (i) night ~ reside temperature
-  my = lm(date_num ~ midday_T,data=xx)
-  xx$res_D = resid(my)
-  mbrt=glm(night_num ~ res_D + midday_T, data = xx, family="binomial")
+  my = lm(date_num ~ midday_T,data=x)
+  x$res_D = resid(my)
+  mbrt=glm(night_num ~ res_D + midday_T, data = x, family="binomial")
   i_night_bin = m_out(name = "(i) res date + T",  dep = "Night predation (0, 1)", fam = 'binomial', 
-            N = nrow(xx), type = "glm",  model = mbrt,
+            N = nrow(x), type = "glm",  model = mbrt,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_i_night-resDate-T_bin',
-               title = 'glm(night_num ~ res_D + midday_T, data = xx, family="binomial")',
-               binomial = TRUE, mo = mbrt, dat = xx, 
+               title = 'glm(night_num ~ res_D + midday_T, data = x, family="binomial")',
+               binomial = TRUE, mo = mbrt, dat = x, 
                fixed = c('res_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")
 
-  mgrt=glm(night_num ~ res_D + midday_T, data = xx)
+  mgrt=glm(night_num ~ res_D + midday_T, data = x)
   i_night_gaus = m_out(name = "(i) res date + T",  dep = "Night predation (0, 1)", fam = 'Gaussian', 
-            N = nrow(xx), type = "lm",  model = mgrt,
+            N = nrow(x), type = "lm",  model = mgrt,
             round_ = 3, nsim = 5000, aic = FALSE, save_sim = FALSE)
   m_ass_s( name = 'ModelAss_i_night-resDate-T_gaus',
-               title = 'glm(night_num ~ res_D + midday_T, data = xx)',
-               binomial = TRUE, mo = mgrt, dat = xx, 
+               title = 'glm(night_num ~ res_D + midday_T, data = x)',
+               binomial = TRUE, mo = mgrt, dat = x, 
                fixed = c('res_T', 'date_num'), categ = NULL, trans = c('none','none'), 
                spatial = FALSE, temporal = TRUE, 
                PNG = TRUE, outdir = "Output/ModelAss/")       

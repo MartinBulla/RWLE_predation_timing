@@ -25,9 +25,9 @@
   source(here::here('R/prepare_data.R'))
 
   # dataset with dummy variable, to get the temperature-legend for a full range of temperature data
-    xx1 = xx[,.(date_num, time, temperature)]
-    xx2 = data.frame(date_num = c(1,1), time = c(12,12), temperature = c(min(a[, mean]),max(a[, mean]))   ) 
-    xxx = rbind(xx1,xx2)
+    x1 = x[,.(date_num, time, temperature)]
+    x2 = data.frame(date_num = c(1,1), time = c(12,12), temperature = c(min(a[, mean]),max(a[, mean]))   ) 
+    xx = rbind(x1,x2)
 
   # dataset for isotherm
     iso_loess <- loess(mean ~ date_num * hr, data = a)
@@ -65,11 +65,11 @@
       ss2 = data.table(date = dats, sunrs = sunrs, sunss = sunss)
       ss2[,date_num := as.numeric(strftime(date,format="%j"))]
   # predicted relationships for (c)
-    m=glm(night_num~date_num,data=xx,family="binomial")
+    m=glm(night_num~date_num,data=x,family="binomial")
     bsim = sim(m, n.sim=nsim)  
     
     v = apply(bsim@coef, 2, quantile, prob=c(0.5)) # coefficients
-    newD=data.frame(date_num = seq(min(xx$date_nu), max(xx$date_nu), length.out = 300)) # values to predict for
+    newD=data.frame(date_num = seq(min(x$date_nu), max(x$date_nu), length.out = 300)) # values to predict for
     X <- model.matrix(~ date_num,data=newD) # exactly the model which was used has to be specified here 
     
     # calculate predicted values and creditability intervals
@@ -85,7 +85,7 @@
 
 # (a) distribution of predation events across season
   ga = 
-    ggplot(xx, aes(x = date_num, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
+    ggplot(x, aes(x = date_num, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
       scale_x_continuous(expand = c(0, 0), name = "Day in year") + scale_y_continuous(expand = c(0, 0), name ="Predation", breaks = c(0,1,2))+#, labels = c("1.00", '2.00', '3.00'))+
       scale_fill_manual(values=c(day = day_, night = night_))+
       annotate("text", x=32, y=1, label= "[count]", size =7*(1/72 * 25.4), hjust = 0.5, angle = 90, colour="grey30") + 
@@ -111,8 +111,8 @@
     stat_contour(data = meanTL, aes(x = date_num, y = hr, z = meanT),  breaks = 45, size = 0.25, colour = isotherm45) +
     stat_contour(data = meanTL, aes(x = date_num, y = hr, z = meanT),  breaks = 40, size = 0.25, colour = isotherm40) +
     stat_contour(data = meanTL, aes(x = date_num, y = hr, z = meanT),  breaks = 35, size = 0.25, colour = isotherm35) +
-    #geom_point(aes(x = date_num, y = time, col = temperature, fill = temperature), xxx)  +
-    geom_point(aes(x = date_num, y = time,  fill = temperature), data = xxx, shape=21, col = point_out) +
+    #geom_point(aes(x = date_num, y = time, col = temperature, fill = temperature), xx)  +
+    geom_point(aes(x = date_num, y = time,  fill = temperature), data = xx, shape=21, col = point_out) +
     scale_y_reverse(expand = c(0, 0), lim = c(24,0), breaks = seq(0,24, by = 1), labels = c(0,"","2","","4","","6","","8","","10","","12","","14","","16","","18","","20","","22","","24"), name = "Time of predation") + 
     scale_x_continuous(expand = c(0, 0), name ="Day in year")+
     coord_cartesian(xlim = c(50,200), clip = 'off') + 
@@ -147,8 +147,8 @@
       #stat_smooth( method="glm", method.args=list(family="binomial"), col = night_, size=0.5) + 
       geom_ribbon(data = pp,aes(ymin=lwr, ymax=upr, x=date_num), fill = night_, alpha = 0.2, show.legend = NA) +
       geom_line(data = pp,aes(x = date_num, y = pred), col = night_) +
-      geom_jitter(data = xx[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, fill = day_, col = point_out, pch = 21) + 
-      geom_jitter(data = xx[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, fill = night_, col = point_out2, pch = 21) + 
+      geom_jitter(data = x[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, fill = day_, col = point_out, pch = 21) + 
+      geom_jitter(data = x[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, fill = night_, col = point_out2, pch = 21) + 
       scale_x_continuous(expand = c(0, 0), lim = c(50,200),  name = "Day in year") +scale_y_continuous(  name = "Probability of night vs day predation") +
       #labs(tag = "(c)") +
       theme_MB +

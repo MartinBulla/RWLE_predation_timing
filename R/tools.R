@@ -12,6 +12,16 @@ using<-function(...) {
     }
 }
 
+#' Extract time as numeric from POSIXct
+#' @param  x (POSIXct)
+#' @export
+getime = function (x) {ifelse(is.na(x), as.numeric(NA), as.numeric(difftime(x, trunc(x,"day"), units = "hours")))}
+
+#' Extract DATE from POSIXct
+#' @param  x (POSIXct)
+#' @export
+getDay = function (x) {as.Date(trunc(x, "day"))}
+
 # load/install packages
   packages = c('arm','data.table', 'effects',  'ggExtra', 'ggplot2', 'ggthemes', 'glue',  'grid','gridExtra', 'here', 'htmlTable', 'lattice', 'lubridate', 'magrittr', 'maptools', 'multcomp', 'performance','plyr','raster','reshape2','stringr','xlsx','zoo', 'gt', 'tidyverse', 'ggpubr')
   sapply(packages, function(x) suppressPackageStartupMessages(using(x)) )

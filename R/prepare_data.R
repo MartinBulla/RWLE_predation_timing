@@ -2,6 +2,7 @@
 a=fread("Data/temperatures.txt")
 a[, year:=substring(date,1,4)]
 a[, date_num:=as.numeric(strftime(date,format="%j"))]
+a[, datetime_round := as.POSIXct(paste(date, hr), format = "%Y-%m-%d %H")]
 
 y=fread("Data/data_final.txt")
 y[, first_egg := as.POSIXct(first_egg)]
@@ -13,39 +14,29 @@ y[, exposure := as.numeric(difftime(end_expo, start_expo, units = 'days'))]
 y[, mid_expo := mean(c(end_expo, start_expo)), by = nest]  
 y[, mid_j :=as.numeric(strftime(mid_expo,format="%j"))]
 y[, mid_age := as.numeric(difftime(mid_expo, first_egg, units = 'days'))]
-y[fate == 0, fate := 7]
-y[fate == 1, fate := 0]
-y[fate == 7, fate := 1]
+y[, date := as.POSIXct(getDay(end_expo))]
+y[, date_num := as.numeric(strftime(date,format="%j"))]
 
-x=fread("Data/pred.csv")
-    # column definitions
-      # nest - unique nest ID
-      # tnt:egg_temp - logger dostupnej pro dany hnizdo
-      # date - date (day.month.year) of predation event
-      # predation - hour (numeric) of predation event
-      # quality - 1 = good, 2 = partial predation events, after which the nest was abandoned, 3 = poor (CO TO ZNAMENA); for the analyses 1 and 2 were used 
-      # ..._time_correction - CO PRESNE TO ZNAMENA reseni nesrovnalosti s posunem casu - nutno k "predation" pricist maximum z nich
-x = merge(x, y[,list(nest,temperature)], all.x =TRUE )
-xx = x[grep("ok",x$remark)] # use only good data
+#y[fate == 0, fate := 7]
+#y[fate == 1, fate := 0]
+#y[fate == 7, fate := 1]
 
-# correct predation time where RFID was runninng on a wrong time 
-    xx$time_corr=xx$predation+xx$rfid_time_correction
-    xx$time_corr[xx$time_corr>24]=xx$time_corr[xx$time_corr>24]-24 # NEMELO BY SE TADY ZMENIT I DATUM?
-    xx$time_corr_round=floor(xx$time_corr)
+# dataset for timing of predation within a day
+x = y[fate == 0 & logger_fate == 'yes']
+x[, time := getime(end_expo)]
+x$time_round=floor(x$time)
+#x$temperature2 = a$median[match(as.character(round.POSIXt(x$end_expo,units="hours")),as.character(as.POSIXct(paste(a$date, a$hr), format = "%Y-%m-%d %H")))]
 # add sunset and sunrise
     koord=SpatialPoints(cbind(55.36449,24.83803), proj4string=CRS("+proj=longlat +datum=WGS84")) # center of the study area
-
-    xx$date=as.POSIXct(xx$date,format="%d.%m.%Y")
-    xx$date_num=as.numeric(strftime(xx$date,format="%j"))
-    xx$sunrise=crepuscule(koord,xx$date,direction="dawn",solarDep=6, POSIXct.out=TRUE)[,2]+4*3600
-    xx$sunset=crepuscule(koord,xx$date,direction="dusk",solarDep=6, POSIXct.out=TRUE)[,2]+4*3600
-    xx$sunrise_num=(as.numeric(xx$sunrise) %% (24*3600))/3600 
-    xx$sunset_num=(as.numeric(xx$sunset) %% (24*3600))/3600 
+    x$sunrise=crepuscule(crds = koord,x$date,direction="dawn",solarDep=6, POSIXct.out=TRUE)[,2]+4*3600
+    x$sunset=crepuscule(koord,x$date,direction="dusk",solarDep=6, POSIXct.out=TRUE)[,2]+4*3600
+    x$sunrise_num=(as.numeric(x$sunrise) %% (24*3600))/3600 
+    x$sunset_num=(as.numeric(x$sunset) %% (24*3600))/3600 
 
     # dataset with sunsets and sunrises for all dates in a season
-        xx$date[xx$date_num==min(xx$date_num)]
-        xx$date[xx$date_num==max(xx$date_num)]
-        max(xx$date)
+        #x$date[x$date_num==min(x$date_num)]
+        #x$date[x$date_num==max(x$date_num)]
+       
         dats=seq.POSIXt(from=as.POSIXct("2019-03-08 UTC"),
                         to=as.POSIXct("2019-07-14 UTC"),by=24*3600)
         sunrs=crepuscule(koord,dats,direction="dawn",solarDep=6, POSIXct.out=TRUE)[,2]+4*3600
@@ -58,22 +49,22 @@ xx = x[grep("ok",x$remark)] # use only good data
         #ggplot(ss, aes(x = sunrs, y = date_num)) + geom_path()
 
 # add whether nest was depredated during day/night   
-    xx$night=as.factor(ifelse(xx$time_corr>= xx$sunrise_num & xx$time_corr <=xx$sunset_num,"day","night" ))
-    xx$night_num = ifelse(xx$night == 'day', 0, 1)
+    x$night=as.factor(ifelse(x$time>= x$sunrise_num & x$time <=x$sunset_num,"day","night" ))
+    x$night_num = ifelse(x$night == 'day', 0, 1)
 
 # add midday and midnight temperature
     am = a[hr == 12, list(date,mean)]
     setnames(am, 'mean', 'midday_T')
     am[, date := as.POSIXct(date)]
-    xx = merge(xx,am, all.x = TRUE, by = 'date')
+    x = merge(x,am, all.x = TRUE, by = 'date')
     
     # add missing temperature as average from the earliest previous and next day midday temperatures
-    xx[is.na(midday_T), midday_T := a[date_num %in% c(145,148) & hr == 12 & year == 2019, mean(mean)]]
+    x[is.na(midday_T), midday_T := a[date_num %in% c(145,148) & hr == 12 & year == 2019, mean(mean)]]
 
 # add time from sunrise and aggregate data
-  xx$time_from_sunrise=xx$time_corr-xx$sunrise_num
-  xx$time_from_sunrise = ifelse(xx$time_from_sunrise>12,xx$time_from_sunrise-24, xx$time_from_sunrise)
+  x$time_from_sunrise=x$time-x$sunrise_num
+  x$time_from_sunrise = ifelse(x$time_from_sunrise>12,x$time_from_sunrise-24, x$time_from_sunrise)
   
-  xx[, time_from_sunrise_r := round(time_from_sunrise)]
-  ts = xx[, .(cases = .N), by = 'time_from_sunrise_r']  
-  td = xx[, .(cases = .N), by = 'time_corr_round'] 
+  x[, time_from_sunrise_r := round(time_from_sunrise)]
+  ts = x[, .(cases = .N), by = 'time_from_sunrise_r']  
+  td = x[, .(cases = .N), by = 'time_round'] 

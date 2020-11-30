@@ -401,7 +401,7 @@
             axis.title.x = element_blank(),
             axis.text.x = element_blank()#, vjus
             )
-    g2 = ggplot(xx, aes(y = night_num, x = date_num)) + geom_jitter(data = xx[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = day_) + geom_jitter(data = xx[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = night_) + stat_smooth( method="glm", method.args=list(family="binomial"), col = night_) + 
+    g2 = ggplot(xx, aes(y = night_num, x = date_num)) + geom_jitter(data = xx[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = day_) + geom_jitter(data = xx[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = night_) + stat_smooth( method="glm", method.args=list(family="binomial"), formula = y ~ poly(x,2), size = 1), col = night_) + 
       theme_MB +
       scale_x_continuous(expand = c(0, 0), lim = c(50,200),  name = "Day in year") +scale_y_continuous(  name = "Probability of night vs day predation")
 
@@ -419,6 +419,22 @@
       )
     
     ggsave(file = 'Output/fit_season_withHist.png', gg, dpi = 300, width = 7, height = 7, units = 'cm')
+
+  ggplot(xx, aes(y = night_num, x = date_num)) + 
+    geom_jitter(data = xx[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = day_) + 
+    geom_jitter(data = xx[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = night_) + 
+    stat_smooth( method="glm", method.args=list(family="binomial"), formula = y ~ poly(x,2), size = 1, col = night_) + 
+      theme_MB +
+      scale_x_continuous(expand = c(0, 0), lim = c(50,200),  name = "Day in year") +scale_y_continuous(  name = "Probability of night vs day predation")
+
+  ggplot(xx[date_num>100], aes(y = night_num, x = date_num)) + 
+    geom_jitter(data = xx[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = day_) + 
+    geom_jitter(data = xx[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, col = night_) + 
+    stat_smooth( method="glm", method.args=list(family="gaussian"), size = 1, col = night_) + 
+      theme_MB +
+      scale_x_continuous(expand = c(0, 0), lim = c(50,200),  name = "Day in year") +scale_y_continuous(  name = "Probability of night vs day predation")  
+
+
   # fit - glm temperature
     ggplot(xx, aes(y = night_num, x = midday_T)) + 
       geom_jitter(data = xx[night == 'day',] , aes(y = night_num,x = midday_T), width = 0, height = 0.025, col = day_) + 

@@ -21,3 +21,4 @@
 # Ignore everything in freeze (even if in Except)
 freeze/
 .DS_Store
+.Rproj.user

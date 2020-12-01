@@ -1,36 +1,44 @@
-Column definition
+Column definitions 
+
+nest_data.txt contain data on each nest used in the paper
 nest    unique identification of the nest
 year    year when the nest was active
 first_egg   estimated date of the first egg (yyyy-mm-dd)
-start_expo  date and time when the nest was found (yyyy-mm-dd hh:mm:ss)
-last_ok     date and time (yyyy-mm-dd hh:mm:ss) of the last physical visit when the nest was active, or the last time when the nest was active based on logger recordings.
-last_control    date and time (yyyy-mm-dd hh:mm:ss) of the last (final) visit of the nest (visit when fate was determined)
-end_expo    end datetime (yyyy-mm-dd hh:mm:ss) of the nest; for predated nests precise end based on logger data, else a midpoint between last_ok and last_control, for hatch nests the estimated hatch date based on laying or flotation or midpoint between last_ok and last_control (whichever is smaller) 
-fate        was the nest predated (0) or did it hatch (1), was deserted (2) or unknown fate (5); 2 and 5 survived for the time of exposure so for some models could be use as 1
+start_expo  date and time when the nest was found (yyyy-mm-dd hh:mm:ss), indicates start of the observation period used in the survival analyses
+last_ok     date and time (yyyy-mm-dd hh:mm:ss) of the last physical visit when the nest was active, or the last time when the nest was active based on logger recordings (note that terminal event such as predation or one chick hatched indicate the end of the time when a nest was active and hence precise last_ok datetime for logger nests)
+last_visit    date and time (yyyy-mm-dd hh:mm:ss) of the last (final) visit of the nest (visit when fate was determined)
+end_expo    date and time when the incubation has ended (yyyy-mm-dd hh:mm:ss), estimated as indicated in "end_type"
+fate        was the nest predated (0) or did it hatch (1), was deserted or failed for another reasons (2) or has unknown fate (5); 2 and 5 survived for the time of exposure so for some models can be used as 1
 logger_fate     is the fate (predation) based on the logger data
-end_type    was the end_expo determined base on the logger recording (logger), during last visit (visit), based on the expected date of hatching (hde),
-            as the half between the last_ok and last_control (hals_rule), or by last_ok plus one day for the nests depredated after expected date of hatching (i.e. when 
-	    neither the half-rule nor the hde approach was applicable).
-temperature     surface temperature when a logger nest was predated
+end_type    indicates how the end_expo is calculated
+
+- for a predated nest with loggers end_expo is based on the logger data (logger) and represents precise date and time, i.e. end_expo equals last_ok 
+
+- for a predated nest without loggers end_expo represents the mid-time between the last_ok and last_visit (half_rule), if last_ok and predation event were after expected hatch date end_expo represents last_ok plus one day (last_ok+1)
+
+- for a successful nest with loggers end_expo is based on the logger data, i.e. on the precise time when parents left the nest with chicks, and estimated as last_ok minus one day (logger_min1day), or if we found both eggs and chicks in a nest (a partly hatched nest) end_expo is based on last_ok minus half a day (logger_minhalfday)
+
+- for a successful nest without loggers end_expo is based on the visit when all chicks were found in/near a nest and estimated as last_visit minus 1-day (visit_min1day), based on the visit where we found both eggs and chicks in a nest (a partly hatched nest) and estimated as last_visit minus 0.5 day (visit_minhalfday) or based on the expected date of hatching (hde) 
+
+- for successful nests found at hatching start_expo = end_expo = last_visit; these nests are not used in the survival analyses (found_at_hatching)
+
+- for deserted nests and nests with unknown fate end_expo equals last_ok, which is based on visits (visit) or logger data (logger)
+
 lat   the latitude of the nest
 lon   the longitude of the nest
 
-According to my understanding in this dataset the predated nests shall have last_ok = last_control = end_expo. 
-- last control is recently the last physical control! Thus, there are some (a few) nests where last control was not writen into db, but we have data from logger
-- in such nests last_ok (derived from logger) is later, than last_control... 
 
+temperatures.txt contains ground temperature measurements based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
+hr hour of the day
+date date in format yyyy-mm-dd hh
+median_t median hourly temperature (°C) based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
+mean mean hourly temperature (°C) based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
+min min hourly temperature (°C) based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
+max max hourly temperature (°C) based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
 
-Or is it intended that last_ok and last_control are always true visits and last_expo is either calculated or derived from the loggers? If so, this shall then be clear.
-Last, but not least, we are missing the Logger table (see our DB_draft)
-there is file "logger_data.RData" - now a bit updated
+logger_data.txt contains information about all loggers used on the nests
 nest    unique identification of the nest
-datetime_start start datetime (yyyy-mm-dd hh:mm:ss) when the logger was placed to the nest
-datetime_end end datetime (yyyy-mm-dd hh:mm:ss) when the logger was either collected from the nest, the memory of the logger was filled, 
-             nest was depredated/hatched or abandoned, or the recording became from any reason unusable (probe took out of the nest, datalogger error,...)
-logger      whether the recordings was taken by tiny tag (tnt), dht logger (dht), digital video-recorder (dvr), MPIO RFID logger (rfid), 
-            rfid modul from the ZAJDA logger (zajda_rfid), temperature/humidity modul from the ZAJDA logger (zajda_thm), or fake egg (lup_egg)
-length      length of used recording in days
-year    year when the nest was active
-
-
-
+datetime_start    date and time when the logger started on the nest (yyyy-mm-dd hh:mm:ss)
+datetime_end   date and time when the logger ended on the nest (yyyy-mm-dd hh:mm:ss)
+logger      indicates type of the logger: dht (CZU designed temperature and humidity logger measuring in 1s intervals), dvr (video recorder), lup_egg, rfid (Max Planck designed), tnt (TinyTag temperature logger recording at 1min interval), zajda_rfid (CZU designed rfid with temperature and humidity measurements), zajda_thm
+length  period (in days), for which the logger was recording on the nest

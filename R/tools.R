@@ -64,7 +64,7 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
 # model output function
   m_out = function(model = m, type = "mixed", 
     name = "define", dep = "define", fam = 'Gaussian',
-    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA){
+    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA, trans = NULL){
     
     bsim = sim(model, n.sim=nsim)  
     
@@ -73,6 +73,16 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
     if(type != "mixed"){
      v = apply(bsim@coef, 2, quantile, prob=c(0.5))
      ci = apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)) 
+
+     if(trans == "binomial"){
+      v = plogis(v)
+      ci = plogis(ci)
+     }
+
+     if(trans == "poisson"){
+      v = exp(v)
+      ci = exp(ci)
+     }
 
      oi=data.frame(type='fixed',effect=rownames(coef(summary(model))),estimate=v, lwr=ci[1,], upr=ci[2,])
       rownames(oi) = NULL
@@ -84,6 +94,16 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
     }else{
      v = apply(bsim@fixef, 2, quantile, prob=c(0.5))
      ci = apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)) 
+
+     if(trans == "binomial"){
+      v = plogis(v)
+      ci = plogis(ci)
+     }
+
+     if(trans == "poisson"){
+      v = exp(v)
+      ci = exp(ci)
+     }
      oi=data.frame(type='fixed',effect=rownames(coef(summary(model))),estimate=v, lwr=ci[1,], upr=ci[2,])
         rownames(oi) = NULL
         oi$estimate_r=round(oi$estimate,round_)

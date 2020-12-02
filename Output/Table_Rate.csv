@@ -1,0 +1,8 @@
+model,response,error_structure,N,type,effect,estimate_r,lwr_r,upr_r
+(a) Logistic regression,Predated vs success days,binomial,440,fixed,(Intercept),0.0097,0.0077,0.012
+(c) Logistic exposure regression,Predated vs success days,binomial_logExp,440,fixed,(Intercept),0.012,0.0262,0.0054
+"","","","",fixed,mid_j,0.4997,0.5013,0.498
+(c) Logistic regression,Predated vs success days,binomial,440,fixed,(Intercept),0.0115,0.0055,0.0246
+"","","","",fixed,mid_j,0.4996,0.4981,0.5012
+(d) Logistic exposure regression,Predated vs success days,binomial_logExp,440,fixed,(Intercept),0.012,0.0054,0.0268
+"","","","",fixed,mid_j,0.4997,0.498,0.5012

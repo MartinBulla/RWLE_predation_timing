@@ -64,7 +64,7 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
 # model output function
   m_out = function(model = m, type = "mixed", 
     name = "define", dep = "define", fam = 'Gaussian',
-    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA, trans = NULL){
+    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA){
     
     bsim = sim(model, n.sim=nsim)  
     
@@ -74,12 +74,17 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
      v = apply(bsim@coef, 2, quantile, prob=c(0.5))
      ci = apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)) 
 
-     if(trans == "binomial"){
+     if(fam == "binomial"){
       v = plogis(v)
       ci = plogis(ci)
      }
+    if(fam == "binomial_logExp"){
+          v = 1-plogis(v)
+          ci = 1-plogis(ci)
+          ci = rbind(ci[2,],ci[1,])
+         }
 
-     if(trans == "poisson"){
+     if(fam == "Poisson"){
       v = exp(v)
       ci = exp(ci)
      }
@@ -333,3 +338,15 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
                 class = "link-glm")
   }
 
+# intersection of logger data on the nest
+  list.model.predictors=function(predictors,max_pred){
+    x=rep(predictors,times=length(predictors)^(max_pred-1))
+    xx=predictors
+    for (pred in 2:max_pred) {
+      xx=rep(predictors,each=length(xx))
+      x=cbind(x,xx) 
+    }
+    unique_perm=unique(apply(t(apply(x,1,sort)), 1, paste,collapse=":"))# odstraneni replikativnich permutaci# odstraneni replikaci v ramci permutace
+    unique_pred=unique(sapply(strsplit(unique_perm,split=":"),unique))# odstraneni replikaci v ramci permutace
+    return(unique_pred)  
+  }

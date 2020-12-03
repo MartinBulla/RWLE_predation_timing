@@ -1,0 +1,41 @@
+model,response,error_structure,N,type,effect,estimate_r,lwr_r,upr_r
+(a) Time of day,Predation per hour,Poisson,24,fixed,(Intercept),-0.089,-0.528,0.36
+"","","","",fixed,sin(rad),0.536,-0.066,1.104
+"","","","",fixed,cos(rad),0.479,-0.099,1.073
+(a) Time of day,Predation per hour,Gaussian,24,fixed,(Intercept),1.037,0.468,1.61
+"","","","",fixed,sin(rad),0.529,-0.286,1.361
+"","","","",fixed,cos(rad),0.479,-0.339,1.282
+(b) Time relative to sunrise,Predation per hour,Poisson,23,fixed,(Intercept),0.696,0.04,1.376
+"","","","",fixed,abs(time_from_sunrise_r),-0.121,-0.244,-0.001
+(b) Time relative to sunrise,Predation per hour,Gaussian,23,fixed,(Intercept),1.811,0.778,2.779
+"","","","",fixed,abs(time_from_sunrise_r),-0.127,-0.275,0.031
+(c) Season,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-3.178,-6.108,-0.322
+"","","","",fixed,date_num,0.024,0.004,0.046
+(c) Season,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.19,-0.724,0.341
+"","","","",fixed,date_num,0.005,0.001,0.009
+(d) Midday T,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-5.679,-11.098,-0.368
+"","","","",fixed,midday_T,0.118,0.009,0.234
+(d) Midday T,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.721,-1.849,0.349
+"","","","",fixed,midday_T,0.025,0.003,0.049
+(e) Midday T + date,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-3.438,-9.506,2.774
+"","","","",fixed,midday_T,0.008,-0.193,0.204
+"","","","",fixed,date_num,0.023,-0.014,0.061
+(e) Midday T + date,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.253,-1.602,1.074
+"","","","",fixed,midday_T,0.002,-0.043,0.048
+"","","","",fixed,date_num,0.005,-0.003,0.013
+(f) Residual T,Midday T,Gaussian,25,fixed,(Intercept),26.932,21.595,32.123
+"","","","",fixed,date_num,0.158,0.12,0.198
+(g) res T + date,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-3.184,-5.942,-0.329
+"","","","",fixed,res_T,0.006,-0.196,0.209
+"","","","",fixed,date_num,0.024,0.004,0.044
+(g) Midday T + date,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.195,-0.747,0.354
+"","","","",fixed,res_T,0.001,-0.043,0.047
+"","","","",fixed,date_num,0.005,0.001,0.009
+(h) Residual date,Date,Gaussian,25,fixed,(Intercept),-94.464,-151.286,-37.326
+"","","","",fixed,midday_T,4.704,3.539,5.913
+(i) res date + T,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-5.704,-11.046,-0.375
+"","","","",fixed,res_D,0.023,-0.014,0.06
+"","","","",fixed,midday_T,0.12,0.01,0.229
+(i) res date + T,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.737,-1.725,0.27
+"","","","",fixed,res_D,0.005,-0.003,0.013
+"","","","",fixed,midday_T,0.026,0.005,0.047

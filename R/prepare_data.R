@@ -5,7 +5,7 @@
    a[, datetime_round := as.POSIXct(paste(date, hr), format = "%Y-%m-%d %H")]
 
 # general dataset
-   y=fread("Data/data_final.txt")
+   y=fread("Data/nests_data.txt")
        #y[end_type == 'logger_minhalveday', end_type := 'logger_minhalfday']
        #y[end_type == 'visit_minhalveday', end_type := 'visit_minhalfday']
        #y$logger_fate = NULL

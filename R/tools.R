@@ -64,8 +64,8 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
 # model output function
   m_out = function(model = m, type = "mixed", 
     name = "define", dep = "define", fam = 'Gaussian',
-    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA){
-    
+    round_ = 3, nsim = 5000, aic = TRUE, save_sim = FALSE, N = NA, back_tran = FALSE, perc_ = 1){
+      # perc_ 1 = proportion or 100%
     bsim = sim(model, n.sim=nsim)  
     
     if(save_sim!=FALSE){save(bsim, file = paste0(save_sim, name,'.RData'))}
@@ -74,17 +74,17 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
      v = apply(bsim@coef, 2, quantile, prob=c(0.5))
      ci = apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)) 
 
-     if(fam == "binomial"){
-      v = plogis(v)
-      ci = plogis(ci)
+     if(back_tran == TRUE & fam == "binomial"){
+      v = perc_*plogis(v)
+      ci = perc_*plogis(ci)
      }
-    if(fam == "binomial_logExp"){
-          v = 1-plogis(v)
-          ci = 1-plogis(ci)
+    if(back_tran == TRUE & fam == "binomial_logExp"){
+          v = perc_*(1-plogis(v))
+          ci = perc_*(1-plogis(ci))
           ci = rbind(ci[2,],ci[1,])
          }
 
-     if(fam == "Poisson"){
+     if(back_tran == TRUE & fam == "Poisson"){
       v = exp(v)
       ci = exp(ci)
      }
@@ -94,26 +94,42 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
       oi$estimate_r=round(oi$estimate,round_)
       oi$lwr_r=round(oi$lwr,round_)
       oi$upr_r=round(oi$upr,round_)
+      if(perc_ == 100){
+       oi$estimate_r = paste0(oi$estimate_r,"%")
+       oi$lwr_r = paste0(oi$lwr_r,"%")
+       oi$upr_r = paste0(oi$upr_r,"%")
+      }
      x=data.table(oi[c('type',"effect", "estimate_r","lwr_r",'upr_r')]) 
    
     }else{
      v = apply(bsim@fixef, 2, quantile, prob=c(0.5))
      ci = apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)) 
 
-     if(trans == "binomial"){
-      v = plogis(v)
-      ci = plogis(ci)
+     if(back_tran == TRUE & fam == "binomial"){
+      v = perc_*plogis(v)
+      ci = perc_*plogis(ci)
      }
+    if(back_tran == TRUE & fam == "binomial_logExp"){
+          v = perc_*(1-plogis(v))
+          ci = perc_*(1-plogis(ci))
+          ci = rbind(ci[2,],ci[1,])
+         }
 
-     if(trans == "poisson"){
+     if(back_tran == TRUE & fam == "Poisson"){
       v = exp(v)
       ci = exp(ci)
      }
+
      oi=data.frame(type='fixed',effect=rownames(coef(summary(model))),estimate=v, lwr=ci[1,], upr=ci[2,])
         rownames(oi) = NULL
         oi$estimate_r=round(oi$estimate,round_)
         oi$lwr_r=round(oi$lwr,round_)
         oi$upr_r=round(oi$upr,round_)
+        if(perc_ == 100){
+         oi$estimate_r = paste0(oi$estimate_r,"%")
+         oi$lwr_r = paste0(oi$lwr_r,"%")
+         oi$upr_r = paste0(oi$upr_r,"%")
+        }
      oii=oi[c('type',"effect", "estimate_r","lwr_r",'upr_r')] 
     
      l=data.frame(summary(model)$varcor)
@@ -162,6 +178,10 @@ getDay = function (x) {as.Date(trunc(x, "day"))}
     if (aic == TRUE){   
         x[1, AIC := AIC(update(model,REML = FALSE))] 
         }
+    if (aic == "AICc"){
+        aicc = AICc(model)
+        x[1, AICc := aicc] 
+    }
     if(type == "mixed"){
       x[1, R2_mar := invisible({capture.output({r2_nakagawa(model)$R2_marginal})})]
       x[1, R2_con := invisible({capture.output({r2_nakagawa(model)$R2_conditional})})]

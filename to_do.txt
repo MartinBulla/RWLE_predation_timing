@@ -1,3 +1,2 @@
-MB ModelAss: Add visualization across sequences
-MB ModelOut (TABLES): for all models 
-MS Check ss dataset and the following ggplot
+Table A2 - add AIC
+Table A2 - add ModelAss

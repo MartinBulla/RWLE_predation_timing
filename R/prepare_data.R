@@ -35,7 +35,7 @@
 
     # add temperature at the study site at time of predation
         x$temperature = a$median_t[match(as.character(round.POSIXt(x$end_expo,units="hours")),as.character(as.POSIXct(paste(a$date, a$hr), format = "%Y-%m-%d %H")))]
-        # add missing temperature as average from the earliest previous and next day midday temperatures
+        # add missing temperature as median from the earliest previous and next day midday temperatures
         datetime_ = x[is.na(temperature), round.POSIXt(end_expo,units="hours")]
         m1 = a[  paste(a$date, a$hr) %in% paste(getDay(datetime_)-2, getime(datetime_)), median_t]
         m2 = a[  paste(a$date, a$hr) %in% paste(getDay(datetime_)+2, getime(datetime_)), median_t]

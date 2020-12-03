@@ -1,3 +1,12 @@
+# ==========================================================================
+# Supporting information for "Sladecek et al. (2020) Dial nest predation 
+# pattern changes across season in a subtropical shorebird
+# Contributor:  Martin Sladecek
+# 📍 This script runs relative to the project's root directory, generates
+# periods for which each nest was continuously recorded with one or more
+# devices 
+# ==========================================================================
+
 logger_days=read.table("Data/logger_data.txt",sep=";",
                        header=T)
 
@@ -8,8 +17,8 @@ logger_days$logger=as.character(logger_days$logger)
 # intersections calculations
   logger_lengths={}
   #nest="5_2018" 
-  for (nest in unique(logger_days$id_nest)) {
-    x=logger_days[logger_days$id_nest==nest,]
+  for (nest in unique(logger_days$nest)) {
+    x=logger_days[logger_days$nest==nest,]
     for (logger in unique(x$logger)) {
       xx=x[x$logger==logger,]
       assign(logger,sort(unlist(mapply(seq,

@@ -69,9 +69,11 @@
     length(unique(o[logger %in% c('lup_egg'), nest])) # N nests with temperature probe within a fake egg
 
     
+    nrow(y[start_type=='laying']) # nests found during egg laying
+
     nrow(y[fate == 1]) # number of hatched nests
-    # ADD # N nests with chick found on or around the nest
-    # ADD # N nests with hatching based on small eggshell pieces in the nest around estimated hatching
+    nrow(y[fate == 1 & end_type %in%c('hde', 'last_ok+1')]) # N nests with hatching based on small eggshell pieces in the nest around estimated hatching
+    nrow(y[fate == 1]) -  nrow(y[fate == 1 & end_type %in%c('hde', 'last_ok+1')]) # N nests with chick found on or around the nest
 
     xtabs(~y$fate+y$end_type) 
     summary(factor(y$fate))
@@ -132,14 +134,14 @@
 
     nrow(y[fate == 0 & end_type == 'logger']) # number of predations while continuous monitoring running on the nest
     
-    # daily predation rate
+  # daily and total predation rate
       ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
       bsim = sim(ma, n.sim=nsim)  
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
-      plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100*30 # total predation rate
+      (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100 # total predation rate
 
-    # night predation
+  # night predation
       summary(factor(x$night))   
 # Explore how T at predation relates to season and mid-day T 
     ggplot(x, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()

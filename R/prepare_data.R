@@ -6,10 +6,11 @@
 
 # general dataset
    y=fread("Data/nests_data.txt")
+       #y=fread("Data/data_final2.txt")
        #y[end_type == 'logger_minhalveday', end_type := 'logger_minhalfday']
        #y[end_type == 'visit_minhalveday', end_type := 'visit_minhalfday']
        #y$logger_fate = NULL
-       #fwrite(y, "Data/data_final.txt")
+       #fwrite(y, "Data/nests_data.txt")
    y[, first_egg := as.POSIXct(first_egg)]
    y[, start_expo := as.POSIXct(start_expo)]
    y[, last_ok := as.POSIXct(last_ok)]

@@ -1,0 +1,11 @@
+model,predictors,df,AICc,deltaAICc,prob,ER
+mb,Season,2,32.53,0,0.43,1
+tb,Midday Temperature,2,34.01,1.48,0.21,2.05
+dtb,Season & T,3,35.12,2.59,0.12,3.58
+mbrd,Season & residual T,3,35.12,2.59,0.12,3.58
+mbrt,T & residual season,3,35.12,2.59,0.12,3.58
+mg,Season,2,32.53,0,0.43,1
+tg,Midday Temperature,2,34.01,1.48,0.21,2.05
+dtg,Season & T,3,35.12,2.59,0.12,3.58
+mgrd,Season & residual T,3,35.12,2.59,0.12,3.58
+mgrt,T & residual season,3,35.12,2.59,0.12,3.58

@@ -2,7 +2,6 @@
   require(here)
   source(here::here('R/tools.R'))
   
-  nsim <- 5000 # number of simulations for predictions
   day_ = 'lightgrey'
   night_ = 'grey30'
 
@@ -24,4 +23,4 @@
             legend.text=element_text(size=5),
             legend.title=element_text(size=6, hjust = 0.5)
             )
-   ggsave(file = 'Output/Fig_A1.png', gg, dpi = 300, width = 7, height = 10, units = 'cm')
+   ggsave(file = 'Output/Fig_A1.png', gg, dpi = 300, width = 7, height = 8, units = 'cm')

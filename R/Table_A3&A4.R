@@ -1,3 +1,11 @@
+# ==========================================================================
+# Supporting information for "Sladecek et al. (2020) Diel nest predation 
+# pattern changes across season in a subtropical shorebird
+# Contributor: Martin Bulla, Martin Sladecek
+# 📍 This script runs relative to the project's root directory and generates
+# Table A3 and A4
+# ==========================================================================
+
 # TOOLS & DATA
   require(here)
   source(here::here('R/tools.R'))
@@ -186,28 +194,7 @@
           )  
   fwrite(file = "./Output/Table_A3.csv", o)
 
-  fwrite(file = "./Output/Table_A3_AIC.csv", aic)
-
-
-
-
- aic = data.table(model = rownames(AICc(mb, tb, tbp, dtg, mbrd, mbrt)), predictors = c('date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mb, tb, tbp, dtb, mbrd, mbrt))
- aic[, deltaAICc := AICc-min(AICc)]
- aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
- aic[, ER := round(max(prob)/prob, 2)]
- aic[order(deltaAICc)]
-
- aic = data.table(model = rownames(AICc(mg, mgp, tg, tgp, dtg, mgrd, mgrt)), predictors = c('date', 'poly date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mg, mgp, tg, tgp, dtg, mgrd, mgrt))
- aic[, deltaAICc := AICc-min(AICc)]
- aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
- aic[, ER := round(max(prob)/prob, 2)]
- aic[order(deltaAICc)]
-
- aic = data.table(model = rownames(AICc(mg, tg, tgp, dtg, mgrd, mgrt)), predictors = c('date', 'T', 'poly T', 'date + T', 'date + resT', 'resDate + T'), AICc(mg, tg, tgp, dtg, mgrd, mgrt))
- aic[, deltaAICc := AICc-min(AICc)]
- aic[, prob := round(exp(-0.5*deltaAICc)/sum(exp(-0.5*deltaAICc)),2)]
- aic[, ER := round(max(prob)/prob, 2)]
- aic[order(deltaAICc)]
+  fwrite(file = "./Output/Table_A4-AIC.csv", aic)
 
 # sessionInfo()
  #R version 4.0.2 (2020-06-22)
@@ -225,16 +212,14 @@
  #[1] grid      stats     graphics  grDevices utils     datasets  methods   base     
  #
  #other attached packages:
- # [1] ggpubr_0.4.0      forcats_0.5.0     dplyr_1.0.1       purrr_0.3.4      
- # [5] readr_1.3.1       tidyr_1.1.1       tibble_3.0.3      tidyverse_1.3.0  
- # [9] gt_0.2.2          zoo_1.8-8         xlsx_0.6.3        stringr_1.4.0    
- #[13] reshape2_1.4.4    raster_3.3-13     plyr_1.8.6        performance_0.4.8
- #[17] multcomp_1.4-13   TH.data_1.0-10    survival_3.1-12   mvtnorm_1.1-1    
- #[21] maptools_1.0-1    sp_1.4-2          magrittr_1.5      lubridate_1.7.9  
- #[25] lattice_0.20-41   htmlTable_2.0.1   gridExtra_2.3     glue_1.4.2       
- #[29] ggthemes_4.2.0    ggplot2_3.3.2     ggExtra_0.9       effects_4.1-4    
- #[33] carData_3.0-4     data.table_1.13.0 arm_1.11-2        lme4_1.1-23      
- #[37] Matrix_1.2-18     MASS_7.3-51.6     here_0.1         
+ # [1] MuMIn_1.43.17     ggpubr_0.4.0      forcats_0.5.0     dplyr_1.0.1       purrr_0.3.4      
+ # [6] readr_1.3.1       tidyr_1.1.1       tibble_3.0.3      tidyverse_1.3.0   gt_0.2.2         
+ #[11] zoo_1.8-8         xlsx_0.6.3        stringr_1.4.0     reshape2_1.4.4    raster_3.3-13    
+ #[16] plyr_1.8.6        performance_0.4.8 multcomp_1.4-13   TH.data_1.0-10    survival_3.1-12  
+ #[21] mvtnorm_1.1-1     maptools_1.0-1    sp_1.4-2          magrittr_1.5      lubridate_1.7.9  
+ #[26] lattice_0.20-41   htmlTable_2.0.1   gridExtra_2.3     glue_1.4.2        ggthemes_4.2.0   
+ #[31] ggplot2_3.3.2     ggExtra_0.9       effects_4.1-4     carData_3.0-4     data.table_1.13.0
+ #[36] arm_1.11-2        lme4_1.1-23       Matrix_1.2-18     MASS_7.3-51.6     here_0.1         
  #
  #loaded via a namespace (and not attached):
  # [1] minqa_1.2.4         colorspace_1.4-1    ggsignif_0.6.0      rio_0.5.16         
@@ -259,4 +244,4 @@
  #[77] abind_1.4-5         nnet_7.3-14         car_3.0-8           modelr_0.1.8       
  #[81] crayon_1.3.4        jpeg_0.1-8.1        readxl_1.3.1        blob_1.2.1         
  #[85] reprex_0.3.0        digest_0.6.25       xtable_1.8-4        httpuv_1.5.4       
- #[89] munsell_0.5.0       mitools_2.4 
+ #[89] stats4_4.0.2        munsell_0.5.0       mitools_2.4 

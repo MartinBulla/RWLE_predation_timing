@@ -1,10 +1,10 @@
 # ==========================================================================
-# Supporting information for "Sladecek et al. (2020) Dial nest predation 
+# Supporting information for "Sladecek et al. (2020) Diel nest predation 
 # pattern changes across season in a subtropical shorebird
 # Contributor: Martin Bulla, Martin Sladecek
 # 📍 This script runs relative to the project's root directory, generates
-# information presented in the text (about sample sizes, distributions,
-# effects) for Abstract, Methods and Results
+# information presented in the main text, i.e. info about sample sizes, 
+# distributions, effects in Abstract, Methods and Results
 # and contains data checks and further explorations
 # ==========================================================================
 
@@ -156,6 +156,7 @@
     m = lm(temperature ~ midday_T,data=x)
     m = lm(temperature ~ date_num,data=x)
     summary(m)
+
 # Data checking   
     nrow(y[start_expo==end_expo])
     xx = y[start_expo==end_expo]
@@ -170,3 +171,61 @@
     nrow(y[start_expo!=last_ok & fate%in%c(0,1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 5])
 
 # sessionInfo()
+ #R version 4.0.2 (2020-06-22)
+ #Platform: x86_64-apple-darwin17.0 (64-bit)
+ #Running under: macOS Mojave 10.14.6
+ #
+ #Matrix products: default
+ #BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+ #LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+ #
+ #locale:
+ #[1] C/UTF-8/C/C/C/C
+ #
+ #attached base packages:
+ #[1] grid      stats     graphics  grDevices utils     datasets  methods  
+ #[8] base     
+ #
+ #other attached packages:
+ # [1] ggpubr_0.4.0      forcats_0.5.0     dplyr_1.0.1       purrr_0.3.4      
+ # [5] readr_1.3.1       tidyr_1.1.1       tibble_3.0.3      tidyverse_1.3.0  
+ # [9] gt_0.2.2          zoo_1.8-8         xlsx_0.6.3        stringr_1.4.0    
+ #[13] reshape2_1.4.4    raster_3.3-13     plyr_1.8.6        performance_0.4.8
+ #[17] multcomp_1.4-13   TH.data_1.0-10    survival_3.1-12   mvtnorm_1.1-1    
+ #[21] maptools_1.0-1    sp_1.4-2          magrittr_1.5      lubridate_1.7.9  
+ #[25] lattice_0.20-41   htmlTable_2.0.1   gridExtra_2.3     glue_1.4.2       
+ #[29] ggthemes_4.2.0    ggplot2_3.3.2     ggExtra_0.9       effects_4.1-4    
+ #[33] carData_3.0-4     data.table_1.13.0 arm_1.11-2        lme4_1.1-23      
+ #[37] Matrix_1.2-18     MASS_7.3-51.6     here_0.1         
+ #
+ #loaded via a namespace (and not attached):
+ # [1] minqa_1.2.4         colorspace_1.4-1    ggsignif_0.6.0     
+ # [4] rio_0.5.16          ellipsis_0.3.1      rgdal_1.5-16       
+ # [7] rprojroot_1.3-2     fs_1.5.0            base64enc_0.1-3    
+ #[10] rstudioapi_0.11     fansi_0.4.1         xml2_1.3.2         
+ #[13] codetools_0.2-16    splines_4.0.2       knitr_1.29         
+ #[16] Formula_1.2-3       jsonlite_1.7.0      nloptr_1.2.2.2     
+ #[19] rJava_0.9-13        broom_0.7.0         cluster_2.1.0      
+ #[22] dbplyr_1.4.4        png_0.1-7           shiny_1.5.0        
+ #[25] compiler_4.0.2      httr_1.4.2          backports_1.1.8    
+ #[28] assertthat_0.2.1    fastmap_1.0.1       cli_2.0.2          
+ #[31] survey_4.0          later_1.1.0.1       acepack_1.4.1      
+ #[34] htmltools_0.5.0     tools_4.0.2         coda_0.19-3        
+ #[37] gtable_0.3.0        Rcpp_1.0.5          cellranger_1.1.0   
+ #[40] vctrs_0.3.2         nlme_3.1-148        insight_0.9.0      
+ #[43] xfun_0.16           xlsxjars_0.6.1      openxlsx_4.1.5     
+ #[46] rvest_0.3.6         mime_0.9            miniUI_0.1.1.1     
+ #[49] lifecycle_0.2.0     rstatix_0.6.0       statmod_1.4.34     
+ #[52] scales_1.1.1        hms_0.5.3           promises_1.1.1     
+ #[55] sandwich_2.5-1      RColorBrewer_1.1-2  curl_4.3           
+ #[58] rpart_4.1-15        latticeExtra_0.6-29 stringi_1.5.3      
+ #[61] bayestestR_0.7.2    checkmate_2.0.0     zip_2.0.4          
+ #[64] boot_1.3-25         rlang_0.4.7         pkgconfig_2.0.3    
+ #[67] htmlwidgets_1.5.1   tidyselect_1.1.0    R6_2.4.1           
+ #[70] generics_0.0.2      Hmisc_4.4-0         DBI_1.1.0          
+ #[73] pillar_1.4.6        haven_2.3.1         foreign_0.8-80     
+ #[76] withr_2.2.0         abind_1.4-5         nnet_7.3-14        
+ #[79] car_3.0-8           modelr_0.1.8        crayon_1.3.4       
+ #[82] jpeg_0.1-8.1        readxl_1.3.1        blob_1.2.1         
+ #[85] reprex_0.3.0        digest_0.6.25       xtable_1.8-4       
+ #[88] httpuv_1.5.4        munsell_0.5.0       mitools_2.4 

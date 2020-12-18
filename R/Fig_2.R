@@ -1,3 +1,11 @@
+# ==========================================================================
+# Supporting information for "Sladecek et al. (2020) Diel nest predation 
+# pattern changes across season in a subtropical shorebird
+# Contributor: Martin Bulla
+# 📍 This script runs relative to the project's root directory and generates
+# Figure 2
+# ==========================================================================
+
 # TOOLS & DATA
   require(here)
   source(here::here('R/tools.R'))
@@ -51,7 +59,7 @@
           legend, ncol = 2, widths=c(5,0.5)
           )
 
-  ggsave(file = 'Output/Fig_1_8cm-width.png', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
+  ggsave(file = 'Output/Fig_2_width-8cm.png', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
 
 # sessionInfo()
   #R version 4.0.2 (2020-06-22)
@@ -105,6 +113,3 @@
   #[85] jpeg_0.1-8.1        readxl_1.3.1        blob_1.2.1          reprex_0.3.0       
   #[89] digest_0.6.25       xtable_1.8-4        httpuv_1.5.4        munsell_0.5.0      
   #[93] mitools_2.4        
-  #
-  #
- 

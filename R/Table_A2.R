@@ -1,3 +1,11 @@
+# ==========================================================================
+# Supporting information for "Sladecek et al. (2020) Diel nest predation 
+# pattern changes across season in a subtropical shorebird
+# Contributor: Martin Bulla, Martin Sladecek
+# 📍 This script runs relative to the project's root directory and generates
+# Table A2
+# ==========================================================================
+
 # TOOLS & DATA
   require(here)
   source(here::here('R/tools.R'))
@@ -76,7 +84,6 @@
             b_sun_pois, b_sun_gaus
           )  
   fwrite(file = "./Output/Table_A2.csv", o)
-
 
 # sessionInfo()
  #R version 4.0.2 (2020-06-22)

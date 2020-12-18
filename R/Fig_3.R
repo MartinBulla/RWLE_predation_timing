@@ -1,3 +1,11 @@
+# ==========================================================================
+# Supporting information for "Sladecek et al. (2020) Diel nest predation 
+# pattern changes across season in a subtropical shorebird
+# Contributor: Martin Bulla, Martin Sladecek
+# 📍 This script runs relative to the project's root directory and generates
+# Figure 3
+# ==========================================================================
+
 # TOOLS
   require(here)
   source(here::here('R/tools.R'))
@@ -226,3 +234,4 @@
   #[85] assertthat_0.2.1    xlsxjars_0.6.1      rprojroot_1.3-2     withr_2.2.0        
   #[89] bayestestR_0.7.2    hms_0.5.3           quadprog_1.5-8      rpart_4.1-15       
   #[93] coda_0.19-3         minqa_1.2.4         shiny_1.5.0         base64enc_0.1-3
+  

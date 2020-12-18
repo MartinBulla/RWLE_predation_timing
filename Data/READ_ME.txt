@@ -56,7 +56,7 @@ mean mean hourly temperature (°C) based on all ground temperature recordings (n
 min min hourly temperature (°C) based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
 max max hourly temperature (°C) based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
 
-logger_data.txt contains information about all loggers used on the nests
+logger_data.txt contains information about all loggers used on nests
 nest    unique identification of the nest
 datetime_start    date and time when the logger started on the nest (yyyy-mm-dd hh:mm:ss)
 datetime_end   date and time when the logger ended on the nest (yyyy-mm-dd hh:mm:ss)

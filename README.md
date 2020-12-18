@@ -17,7 +17,7 @@ Data, codes and outputs of the analyses.
 [R](R/): all r-scripts used in the analyses
 - tools.R loads functions and packages used in the other R-scripts (needs to be always loaded before running the other scripts)
 - prepare_data.R prepares the main datasets (but only after tools.R is loaded)
-- prepare_logger_overlaps.R generates periods, for which each nest was continuously recorded with one or more devices 
+- prepare_logger_overlaps.R generates periods, for which each nest was continuously recorded with one or more devices (to run, need tools.R loaded)
 - Out_Text scripts generates written outputs (e.g sample sizes, estimates) for the text - Abstract, Introduction, Method, and Results
 - Fig scripts generate Figures
 - Table scripts generate Tables

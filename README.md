@@ -8,7 +8,7 @@ Data, codes and outputs of the analyses.
 
 ### **Folders and files**
 
-[Data](Data/): 
+[Data](Data/): all data used in the analyses
 - READ_ME.txt - column definitions for each of the three datasets
 - nests_data.txt - information on each nest used in the paper
 - logger_data.txt - information about each logger placed on each nest

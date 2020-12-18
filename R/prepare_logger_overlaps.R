@@ -18,22 +18,22 @@ logger_days$logger=as.character(logger_days$logger)
   logger_lengths={}
   #nest="5_2018" 
   for (nest in unique(logger_days$nest)) {
-    x=logger_days[logger_days$nest==nest,]
-    for (logger in unique(x$logger)) {
-      xx=x[x$logger==logger,]
+    xi=logger_days[logger_days$nest==nest,]
+    for (logger in unique(xi$logger)) {
+      xx=xi[xi$logger==logger,]
       assign(logger,sort(unlist(mapply(seq,
                                        from=as.numeric(round.POSIXt(xx$datetime_start,units = "mins"))%/% 60,
                                        to=as.numeric(round.POSIXt(xx$datetime_end,units="mins")) %/% 60))))
     }
-    if(length(unique(x$logger))==1){
+    if(length(unique(xi$logger))==1){
       x3=data.frame(nest=nest,
-                    name=unique(x$logger),
-                    length=length(get(unique(x$logger))))
+                    name=unique(xi$logger),
+                    length=length(get(unique(xi$logger))))
       logger_lengths=rbind(x3,logger_lengths)
       
     } else {
-      x1=list.model.predictors(predictors = unique(x$logger),
-                               max_pred = length(unique(x$logger)))
+      x1=list.model.predictors(predictors = unique(xi$logger),
+                               max_pred = length(unique(xi$logger)))
       x2={}
       for (i in 1:length(x1)) {
         if(length(unlist(x1[i]))==1){
@@ -59,7 +59,7 @@ logger_days$logger=as.character(logger_days$logger)
       
     }
     
-    if(nrow(x)>1){print(nest)}
+    if(nrow(xi)>1){print(nest)}
     
   }
   

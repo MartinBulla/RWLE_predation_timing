@@ -119,7 +119,7 @@
     nrow(y) # N nests
     sum(round(y$exposure))  # number of days followed
     round(median(y$exposure)); round(mean(y$exposure));  round(range(y$exposure)) 
- 
+    y$exposure[y$exposure>35]
     nrow(y[fate == 0]) # number of predated nests
     nrow(y[fate == 1]) # number of hatched nests   
     nrow(y[fate == 2]) # number of failed for other reason 
@@ -141,8 +141,14 @@
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100 # total predation rate
 
+
   # night predation
       summary(factor(x$night))   
+
+  # first part of the day predation
+     nrow(x[time<12])   
+     nrow(x[time<12])/nrow(x)   
+
 # Explore how T at predation relates to season and mid-day T 
     ggplot(x, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
     ggplot(x, aes(y = temperature, x = date_num)) + stat_smooth(method = 'lm') + geom_point()

@@ -44,7 +44,6 @@
     tx = data.table(time_from_sunrise_r = seq(-11,11,by =1))
     tsx = merge(ts,tx, all = TRUE)
     tsx[is.na(cases), cases := 0]
-    tsx[,rad :=(2*pi*time_from_sunrise_r)/24]
 
    
     m = glm(cases~abs(time_from_sunrise_r), family = 'poisson', tsx)

@@ -13,7 +13,7 @@ end_type    indicates how end_expo is calculated
 
 - for a predated nest with loggers end_expo is based on the logger data (logger) and represents precise date and time, i.e. end_expo equals last_ok 
 
-- for a predated nest without loggers end_expo represents the mid-time between the last_ok and last_visit (half_rule), if last_ok and predation event were after expected hatch date end_expo represents last_ok plus one day (last_ok+1)
+- for a predated nest without loggers end_expo represents the mid-time between the last_ok and last_visit, unless expected hatch date was earlier, in which case the end_expo represent expected hatch date (half_rule). If last_ok and predation event were after expected hatch date end_expo represents last_ok plus one day (last_ok+1)
 
 - for a successful nest with loggers end_expo is based on the logger data, i.e. on the precise time when parents left the nest with chicks, and estimated as last_ok minus one day (logger_min1day), or if we found both eggs and chicks in a nest (a partly hatched nest) end_expo is based on last_ok minus half a day (logger_minhalfday)
 

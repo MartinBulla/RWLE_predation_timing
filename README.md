@@ -23,3 +23,5 @@ Data, codes and outputs of the analyses.
 - Table scripts generate Tables
 
 [Output](Output/): contains outputs of the Fig and Table scripts (i.e. Figs and Tables for the main text, as well as plots of model assumptions for each model from this manuscript).
+
+RWLA_predation_timing.sublime-project - sublime project file

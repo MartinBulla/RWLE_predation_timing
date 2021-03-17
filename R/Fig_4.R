@@ -67,7 +67,7 @@
       #geom_jitter(aes(x = midday_T, y = night_num,  fill = temperature), data = xx, shape=21, col = point_out) +
       scale_fill_viridis_c(option = "plasma", name = "°C\nwhen\npredated") +
       scale_x_continuous(expand = c(0, 0), lim = c(30,60),  name = "Mid-day T [°C]") +
-      scale_y_continuous(  name = "Probability of night vs day predation") +
+      scale_y_continuous(  name = "Probability of night predation") +
       coord_cartesian(xlim = c(30,61), clip = 'off') + 
       #labs(tag = "(c)") +
       theme_MB +

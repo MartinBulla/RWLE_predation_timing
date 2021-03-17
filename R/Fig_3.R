@@ -94,7 +94,7 @@
 # (a) distribution of predation events across season
   ga = 
     ggplot(x, aes(x = date_num, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
-      scale_x_continuous(expand = c(0, 0), name = "Day in year") + scale_y_continuous(expand = c(0, 0), name ="Predation", breaks = c(0,1,2))+#, labels = c("1.00", '2.00', '3.00'))+
+      scale_x_continuous(expand = c(0, 0), name = "Day in year") + scale_y_continuous(expand = c(0, 0), name ="Predated nests", breaks = c(0,1,2))+#, labels = c("1.00", '2.00', '3.00'))+
       scale_fill_manual(values=c(day = day_, night = night_))+
       annotate("text", x=32, y=1, label= "[count]", size =7*(1/72 * 25.4), hjust = 0.5, angle = 90, colour="grey30") + 
       coord_cartesian(xlim = c(50,200), clip = 'off') +                
@@ -157,7 +157,7 @@
       geom_line(data = pp,aes(x = date_num, y = pred), col = night_) +
       geom_jitter(data = x[night == 'day',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, fill = day_, col = point_out, pch = 21) + 
       geom_jitter(data = x[night == 'night',] , aes(y = night_num, x = date_num), width = 0, height = 0.025, fill = night_, col = point_out2, pch = 21) + 
-      scale_x_continuous(expand = c(0, 0), lim = c(50,200),  name = "Day of the year") +scale_y_continuous(  name = "Probability of night vs day predation") +
+      scale_x_continuous(expand = c(0, 0), lim = c(50,200),  name = "Day of the year") +scale_y_continuous(  name = "Probability of night predation") +
       #labs(tag = "(c)") +
       theme_MB +
       theme(plot.tag.position = 'topleft', #c(0.81, 0.98),

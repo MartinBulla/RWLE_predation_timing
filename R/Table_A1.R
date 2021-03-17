@@ -18,8 +18,6 @@
 
   source(here::here('R/prepare_data.R'))
   yy = y[exposure>0]
-
-# daily predation rate according to Aebischer - logistic regression
   yy[fate == 0, fate_:= 1]   # 1 predated works if swapped
   yy[is.na(fate_), fate_:= 0]    # 0 all other
   yy[, year_:= as.factor(year)] 
@@ -27,9 +25,9 @@
   yy[fate_==1, failure := 1]
   yy[is.na(failure), failure := 0]
 
+# daily predation rate according to Aebischer - logistic regression
   ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
-  100*(exp(ma$coefficients)/(1+exp(ma$coefficients))) #  0.01082444
-  100*plogis(ma$coefficients) * 30
+  mas=glm(cbind(failure,success)~mid_j,family="binomial",data=yy)
 
   Aebischer_b = m_out(name = "(a) Original scale",  dep = "Predated vs success days", fam = 'binomial', 
           N = nrow(yy), type = "glm",  model = ma,
@@ -38,8 +36,6 @@
   Aebischer = m_out(name = "(a) Binomial scale",  dep = "Predated vs success days", fam = 'binomial', 
           N = nrow(yy), type = "glm",  model = ma,
           round_ = 2, nsim = 5000, aic = FALSE, save_sim = FALSE, back_tran = FALSE, perc_ = 1)
-
-  mas=glm(cbind(failure,success)~mid_j,family="binomial",data=yy)
 
   Aebischer_Sb = m_out(name = "(b) Original scale",  dep = "Predated vs success days", fam = 'binomial', 
           N = nrow(yy), type = "glm",  model = mas,
@@ -70,7 +66,6 @@
   Aebischer_b$ER = Aebischer_b$prob = Aebischer_b$deltaAICc = Aebischer_b$AICc = ""
   Aebischer_Sb$ER = Aebischer_Sb$prob = Aebischer_Sb$deltaAICc = Aebischer_Sb$AICc = ""
 
-
 # COMBINE and EXPORT
   out = rbind(  
               Aebischer_b, Aebischer_Sb, 
@@ -78,7 +73,29 @@
           )  
   fwrite(file = "./Output/Table_A1.csv", out)
 
+# MODAL ASSUMPTIOMS
+  ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
+  mag=glmer(cbind(failure,success)~1 +(1|nest),family="binomial",data=yy)
+  mas=glm(cbind(failure,success)~mid_j,family="binomial",data=yy)
+  m_ass_s( name = 'Table_A1a',
+               title = 'glm(cbind(failure,success)~1,family="binomial",data=yy)',
+               binomial = TRUE, mo = ma, dat = yy, 
+               fixed = NULL, categ = NULL, 
+               spatial = TRUE, temporal = TRUE, 
+               PNG = TRUE, outdir = "Output/ModelAss/")
+  bsim = sim(ma, n.sim=nsim)  
+  plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
+  plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+  (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
 
+  bsim = sim(mag, n.sim=nsim)
+  plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
+  plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+  (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
+
+  ma$deviance/ma$df.residual
+  library(AER)    
+  dispersiontest(ma,trafo=1)
 
 # OLD version (removed from the MS after reviews) with various methods that give similar results
   # daily predation rate according to Mayfield

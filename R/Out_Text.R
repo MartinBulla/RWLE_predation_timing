@@ -170,7 +170,6 @@
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100,2) # estimate
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100,2) #95%CI
       round((1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100) # total predation rate
-
    
    # continuously monitored
     length(unique(o$nest)) # N nests
@@ -219,6 +218,10 @@
      nrow(x[time<12])   
      nrow(x[time<12])/nrow(x)   
 
+     x[, exp_hatch := first_egg + 30*24*60*60]
+     x[, diff := as.numeric(difftime(exp_hatch, end_expo, units = 'days'))]
+
+     x[,.(nest,exposure, first_egg,exp_hatch,end_expo, diff)]
 # Explore how T at predation relates to season and mid-day T 
     ggplot(x, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
     ggplot(x, aes(y = temperature, x = date_num)) + stat_smooth(method = 'lm') + geom_point()

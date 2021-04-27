@@ -15,7 +15,7 @@
 
 # general dataset
    y=fread("Data/nests_data.txt")
-       #y=fread("Data/data_final2.txt")
+       #y=fread("Data/data_final2_1.txt")
        #y[end_type == 'logger_minhalveday', end_type := 'logger_minhalfday']
        #y[end_type == 'visit_minhalveday', end_type := 'visit_minhalfday']
        #y$logger_fate = NULL
@@ -75,10 +75,12 @@
           x$time_from_sunrise = ifelse(x$time_from_sunrise>12,x$time_from_sunrise-24, x$time_from_sunrise)
           
           x[, time_from_sunrise_r := round(time_from_sunrise)]
+
+          x_ = x
   
 # dataset with number of cases per hour  and hour from sunrise
-  td = x[, .(cases = .N), by = 'time_round'] 
-  ts = x[, .(cases = .N), by = 'time_from_sunrise_r']  
+  td = x_[, .(cases = .N), by = 'time_round'] 
+  ts = x_[, .(cases = .N), by = 'time_from_sunrise_r']  
 
 # dataset with sunsets and sunrises for all dates in a season
   #x$date[x$date_num==min(x$date_num)]

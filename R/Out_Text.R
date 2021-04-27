@@ -29,38 +29,48 @@
     yy[fate_==1, failure := 1]
     yy[is.na(failure), failure := 0]
 
-    yyy = yy
+    yyy = copy(yy)
     yyy[exposure>30, exposure:=30]
     yyy[ , success := round(exposure - fate_)]
     yyy[fate_==1, failure := 1]
     yyy[is.na(failure), failure := 0]
 
-    source(here::here('R/prepare_logger_overlaps.R')) # runs for some time
-    w = data.table(logger_lengths)
-
     o =fread("Data/logger_data.txt")
     o[, start_j := as.numeric(strftime(datetime_start,format="%j"))]
     o[, end_j := as.numeric(strftime(datetime_end,format="%j"))]
+    
+    source(here::here('R/prepare_logger_data_intersections.R')) # runs for some time
+    w = data.table(logger_bouts) # shows for how long each nest was continuously monitored 
+      w[, exposure := as.numeric(difftime(stop, start, units = 'days'))]
+    u = data.table(logger_lengths) # shows for how long various combinations of loggers were on each nest
 
 # Outputs - Abstract
-    
-    nrow(y) # number of nests
+    nrow(yy) # number of nests with exposure >0
+    sum(yy$exposure)
     length(unique(o$nest)) # number of nests with some logger that continuously recorded
-    round(sum(w$days)) # N days nests were continuously monitored
+    round(sum(w$exposure)) # N days nests were continuously monitored
 
-    nrow(y[fate == 1]); round(100*nrow(y[fate == 1])/nrow(y)) # number & % of hatched nests
-    nrow(y[fate == 0]); round(100*nrow(y[fate == 0])/nrow(y))  # number & %  of predated nests      
-    nrow(y[fate == 2]); round(100*nrow(y[fate == 2])/nrow(y))  # number & %  of failed for other reason 
-    nrow(y[fate == 5]); round(100*nrow(y[fate == 5])/nrow(y))  # number & %  with unknown fate
+    nrow(yy[fate == 1]); round(100*nrow(yy[fate == 1])/nrow(yy)) # number & % of hatched nests
+    nrow(yy[fate == 0]); round(100*nrow(yy[fate == 0])/nrow(yy))  # number & %  of predated nests      
+    nrow(yy[fate == 2]); round(100*nrow(yy[fate == 2])/nrow(yy))  # number & %  of failed for other reason 
+    nrow(yy[fate == 5]); round(100*nrow(yy[fate == 5])/nrow(yy))  # number & %  with unknown fate
 
     # daily and total predation rate
         ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
         bsim = sim(ma, n.sim=nsim)  
+        #save(file = 'Data/DPR_sim.Rdata', bsim)
+        load('Data/DPR_sim.Rdata')
         plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
         plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
 
         (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
+        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975))))^30)*100  # total predation rate
 
+    #    
+# Outputs - Introduction
+    nrow(yy)  
+    length(unique(o$nest)) # number of nests with some logger that continuously recorded
+    round(sum(w$exposure))  
 # Outputs - Methods
     length(unique(o$nest)) # N nests with some logger that continuously recorded
     length(unique(o[logger =='dvr', nest])) # N nests with video recording system
@@ -70,39 +80,49 @@
     length(unique(o[logger %in% c('lup_egg'), nest])) # N nests with temperature probe within a fake egg
 
     
-    nrow(y[start_type=='laying']) # nests found during egg laying
+    nrow(yy[start_type=='laying']) # nests found during egg laying
 
-    nrow(y[fate == 1]) # number of hatched nests
-    nrow(y[fate == 1]) -  nrow(y[fate == 1 & end_type %in%c('hde', 'last_ok+1')]) # N nests with chick found on or around the nest
-    nrow(y[fate == 1 & end_type %in%c('hde', 'last_ok+1')]) # N nests with hatching based on small eggshell pieces in the nest around estimated hatching
-    
+    nrow(yy[fate == 1]) # number of hatched nests
+    nrow(yy[chicks_found=='final_nest_check']) # chicks found on the nest
+    nrow(yy[chicks_found=='later']) # chicks found later
+    nrow(yy[fate == 1 & chicks_found == 'no']) # nest empty (chicks out of the nest), but eggshell pieces that indicate hatching found in the nest
+    641/233 # average number of chicks per found on/around a nest
+    233/nrow(yy[fate == 1 & chicks_found == 'no']) # average number of chicks per nest
 
-    xtabs(~y$fate+y$end_type) 
-    summary(factor(y$fate))
-    summary(factor(y$end_type)) 
-
-    nrow(y[end_type%in%c('logger_min1day')]) # N hatched a day ago from the time the chicks left the nest - based on logger data
-    nrow(y[end_type%in%c('visit_min1day')]) # N hatched a day ago from the time the chicks left the nest - based on age of chicks found away from the nest
-
-    nrow(y[end_type%in%c('logger_minhalfday', 'visit_minhalfday')]) # N hatched 0.5day ago
-    nrow(y[end_type%in%c('hde')]) # hatched on estimated hatch date
+    nrow(yy[end_type=='logger_min1day']) # known time when chicks left based on visualized continuous data -  N hatched a day ago from the time the chicks left the nest - based on logger data
+    nrow(yy[end_type=='visit_min1day']) # known time when chicks left based on visualized continuous data - N hatched a day ago from the time the chicks left the nest - based on age of chicks found away from the nest
+    nrow(yy[end_type%in%c('logger_minhalfday', 'visit_minhalfday')]) # N hatched 0.5day ago
+    nrow(yy[end_type%in%c('hde') & chicks_found == 'no', ]) # N  without chicks, but with signs of hatching
+    nrow(yy[end_type%in%c('hde') & chicks_found == 'final_nest_check', ]) # N  older chicks were found around the nest during the final nest check 
+    nrow(yy[end_type%in%c('hde') & chicks_found == 'later', ]) # N  parents found later with chicks
+    nrow(yy[end_type%in%c('hde')]) # hatched on estimated hatch date
     nrow(y[fate ==1 & end_type%in%c('last_ok+1')]) # hatched on estimated hatch date + 1 day (for cases where last ok visit was after the estimated hatch date)
-    nrow(y[end_type%in%c('found_at_hatching')]) # hatched on estimated hatch date
+    nrow(y_[end_type%in%c('found_at_hatching')]) # found at or after hatching - zero exposure
+    
+    xtabs(~yy$fate+yy$end_type) 
+    summary(factor(yy$fate))
+    summary(factor(yy$end_type)) 
 
     nrow(y[fate == 0]) # number of predated nests
+    nrow(y[fate == 0 & remarks==""]) # number of predated nests based on egg-shell pieces or adults without chicks
     nrow(y[fate == 0 & end_type%in%c('logger', 'logger_min1day', 'logger_minhalfday')]) # predated nests with precise logger based end
-    # ADD nests found empty
-    # ADD predate eggs
-    # ADD some eggs missing and some abandoned
+    y[fate == 0 & remarks!="", remarks] # number of partially predated and number of nests with egg remains
 
     nrow(y[end_type%in%c('half_rule')]) # predated at midpoint between last_ok and last_visit
     nrow(y[fate == 0 & end_type%in%c('last_ok+1')]) # predated last_ok +1 day
-
-    nrow(y[fate %in% c(2,5) & end_type%in%c('visit', 'logger')]) # exposure finished with last_ok visit
-    nrow(y[fate %in% c(2) & end_type%in%c('visit', 'logger')]) # exposure finished with last_ok - nests were abandoned or failed for other reason
-    nrow(y[fate %in% c(5) & end_type%in%c('visit', 'logger')]) # exposure finished with last_ok - nests with unknown fate
     
-    # number of  followed nests in each day of the season 
+    nrow(y[fate %in% c(5) & end_type%in%c('visit', 'logger') & exposure > 0])# unknown fate
+    nrow(y[fate %in% c(2) & end_type%in%c('visit', 'logger') & exposure > 0])# abandoned or failed for other reasons
+
+    nrow(y[fate == 2 & exposure == 0]) # failed for other reason, but missing visits and hence exposure
+    nrow(y[fate == 5 & exposure == 0]) # unknown fate, but missing visits and hence exposure
+
+    #nrow(yy[fate %in% c(2,5) & end_type%in%c('visit', 'logger')]) # exposure finished with last_ok visit
+
+    #nrow(y[fate %in% c(2) & end_type%in%c('visit', 'logger')]) # exposure finished with last_ok - nests were abandoned or failed for other reason
+    #nrow(y[fate %in% c(5) & end_type%in%c('visit', 'logger')]) # exposure finished with last_ok - nests with unknown fate
+    
+    # not in MS - number of  followed nests in each day of the season 
         #max(y$end_j)-min(y$first_j, na.rm=T)
         max(y$end_j)-min(y$start_j, na.rm=T) # N days in breeding season
         l = list()
@@ -115,41 +135,40 @@
         ggplot(yo, aes(x = day, y = recorded)) + geom_point()
 
     # correlation of season and mid-day temperature
-        cor(x$mid_j, x$midday_T, method = 'pearson')
-        ggplot(xx, aes(y = date_num, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
-        ggplot(xx, aes(x = date_num, y = midday_T)) + stat_smooth(method = 'lm') + geom_point()
-        ggplot(xx, aes(x = date_num, y = midday_T, col = as.factor(year))) + stat_smooth(method = 'lm') + geom_point()
+        cor(x_$mid_j, x_$midday_T, method = 'pearson')
+        ggplot(x_, aes(y = date_num, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
+        ggplot(x_, aes(x = date_num, y = midday_T, col = as.factor(year))) + stat_smooth(method = 'lm') + geom_point()
 
 # Outputs - Results  
  
   # all
-    nrow(y) # N nests
-    sum(round(y$exposure))  # number of days followed
-    round(median(y$exposure)); round(mean(y$exposure));  round(range(y$exposure)) 
-    y$exposure[y$exposure>35]
-    nrow(y[fate == 0]); round(100*nrow(y[fate == 0])/nrow(y))  # number & %  of predated nests      
-    nrow(y[fate == 1]); round(100*nrow(y[fate == 1])/nrow(y)) # number & % of hatched nests
-    nrow(y[fate == 2]); round(100*nrow(y[fate == 2])/nrow(y))  # number & %  of failed for other reason 
-    nrow(y[fate == 5]); round(100*nrow(y[fate == 5])/nrow(y))  # number & %  with unknown fate
-
+    nrow(yy) # N nests
+    nrow(yy[fate == 0]); round(100*nrow(yy[fate == 0])/nrow(yy))  # number & %  of predated nests      
+    nrow(yy[fate == 1]); round(100*nrow(yy[fate == 1])/nrow(yy)) # number & % of hatched nests
+    nrow(yy[fate == 2]); round(100*nrow(yy[fate == 2])/nrow(yy))  # number & %  of failed for other reason 
+    nrow(yy[fate == 5]); round(100*nrow(yy[fate == 5])/nrow(yy))  # number & %  with unknown fate
     
+    sum(yy$exposure) # number of days followed
+    round(median(yy$exposure),2); round(mean(yy$exposure),2);  round(range(yy$exposure),2) 
+    y$exposure[y$exposure>35]
+     
   # daily and total predation rate
       ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
       bsim = sim(ma, n.sim=nsim)  
+      load('Data/DPR_sim.Rdata') # loads one specific simulations that gave the results shown in the MS
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
-
-  # daily predation rate caping the extreme observation periods at 30 days
+  # daily predation rate capping the extreme observation periods at 30 days
       nrow(yy[exposure>30]) # N nests with long observation periods  
       ma=glm(cbind(failure,success)~1,family="binomial",data=yyy)
       bsim = sim(ma, n.sim=nsim)  
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
-   
-   # not in the MS, but as a response to the reviewer - >5 days of exposure
-      yyyy = yyy[exposure>5]
+
+  # not in the MS, but as a response to the reviewer - >5 days of exposure
+      yyyy = yy[exposure>5]
       yyyy[ , success := round(exposure - fate_)]
       yyyy[fate_==1, failure := 1]
       yyyy[is.na(failure), failure := 0] 
@@ -157,10 +176,9 @@
       bsim = sim(ma, n.sim=nsim)  
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
-      (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
-   
-   # daily and total predation rate without unknown
-      yyy = yy[fate!=5]
+      (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate 
+  # not in the MS, daily predation rate without nests predated after estimated hatch date
+      yyyy = yy[-which(fate == 0 & end_type%in%c('last_ok+1'))]
       yyyy[ , success := round(exposure - fate_)]
       yyyy[fate_==1, failure := 1]
       yyyy[is.na(failure), failure := 0] 
@@ -170,64 +188,75 @@
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100,2) # estimate
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100,2) #95%CI
       round((1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100) # total predation rate
-   
-   # continuously monitored
-    length(unique(o$nest)) # N nests
+  # not in the MS, daily and total predation rate without unknown
+      yyyy = yy[fate!=5]
+      yyyy[ , success := round(exposure - fate_)]
+      yyyy[fate_==1, failure := 1]
+      yyyy[is.na(failure), failure := 0] 
 
-    ww = w[  , .(days_followed = sum(days)), by = nest]
-    summary(ww$days) # N days each nest was continuously monitored
-    round(sum(ww$days)) # N days continuously monitored
+      ma=glm(cbind(failure,success)~1,family="binomial",data=yyyy)
+      bsim = sim(ma, n.sim=nsim)  
+      round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100,2) # estimate
+      round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100,2) #95%CI
+      round((1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100) # total predation rate
+  # not in the MS, predation rate for continuously monitored period only
+        w[ ,fate := 0]
+        w[ , max_stop :=max(stop), by = nest]
+        w[ stop == max_stop & nest %in% y[fate == 0 & end_type == 'logger', nest], fate :=1]
+        w[ , success := round(exposure - fate)]
+        w[fate==1, failure := 1]
+        w[is.na(failure), failure := 0]
+
+        
+        ma=glm(cbind(failure,success)~1,family="binomial",data=w)
+        bsim = sim(ma, n.sim=nsim)  
+        plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
+        plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
+        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
+        # predation rate for continuously monitored nests
+        w[ ,fate := 0]
+        w[ , max_stop :=max(stop), by = nest]
+        w[ stop == max_stop & nest %in% y[fate == 0 & end_type == 'logger', nest], fate :=1]
+        w[ , success := round(exposure - fate)]
+        w[fate==1, failure := 1]
+        w[is.na(failure), failure := 0]
+
+        
+        ma=glm(cbind(failure,success)~1,family="binomial",data=w)
+        bsim = sim(ma, n.sim=nsim)  
+        plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
+        plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
+        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
+         
+  # continuously monitored
+    length(unique(o$nest)) # N nests
+    length(unique(o$nest))/nrow(yy) # % of nests
+    summary(w$exposure) # N days each nest was continuously monitored
+    min(w$exposure)*24
+    round(sum(w$exposure)) # N days continuously monitored
 
     nrow(y[fate == 0 & end_type == 'logger']) # number of predations while continuous monitoring running on the nest
 
-    # predation rate for continuously monitored nests
-        yc = y[exposure>0 & nest %in% unique(o$nest)]
-        yc[fate == 0, fate_:= 1]   # 1 predated works if swapped
-        yc[is.na(fate_), fate_:= 0]    # 0 all other
-        yc[ , success := round(exposure - fate_)]
-        yc[fate_==1, failure := 1]
-        yc[is.na(failure), failure := 0]
-
-        
-        ma=glm(cbind(failure,success)~1,family="binomial",data=yc)
-        bsim = sim(ma, n.sim=nsim)  
-        plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
-        plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
-        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
-   
-    # predation rate during continuous monitored nests
-        oc = o[, sum(length), by = nest]
-        names(oc)[2] = 'exposure'
-        oc[, fate_:=0]   # 1 predated works if swapped
-        oc[nest %in% y[fate == 0 & end_type == 'logger',nest], fate_:= 1]   # 1 predated works if swapped
-        oc[ , success := round(exposure - fate_)]
-        oc[fate_==1, failure := 1]
-        oc[is.na(failure), failure := 0]
-
-        ma=glm(cbind(failure,success)~1,family="binomial",data=oc)
-        bsim = sim(ma, n.sim=nsim)  
-        plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
-        plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
-        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
-
-
   # night predation
-      summary(factor(x$night))   
+    summary(factor(x_$night))   
+    sum(x_$night_num)/nrow(x_)
 
   # first part of the day predation
-     nrow(x[time<12])   
-     nrow(x[time<12])/nrow(x)   
+     nrow(x_[time<12])   
+     nrow(x_[time<12])/nrow(x_)   
 
-     x[, exp_hatch := first_egg + 30*24*60*60]
-     x[, diff := as.numeric(difftime(exp_hatch, end_expo, units = 'days'))]
+     x_[, exp_hatch := first_egg + 30*24*60*60]
+     x_[, diff := as.numeric(difftime(exp_hatch, end_expo, units = 'days'))]
+     x_[,.(nest,exposure, first_egg,exp_hatch,end_expo, diff)]
 
-     x[,.(nest,exposure, first_egg,exp_hatch,end_expo, diff)]
 # Explore how T at predation relates to season and mid-day T 
-    ggplot(x, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
-    ggplot(x, aes(y = temperature, x = date_num)) + stat_smooth(method = 'lm') + geom_point()
+    ggplot(x_, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
+    ggplot(x_, aes(y = temperature, x = date_num)) + stat_smooth(method = 'lm') + geom_point()
 
-    m = lm(temperature ~ midday_T,data=x)
-    m = lm(temperature ~ date_num,data=x)
+    m = lm(temperature ~ midday_T,data=x_)
+    m = lm(temperature ~ date_num,data=x_)
     summary(m)
 
 # Data checking   

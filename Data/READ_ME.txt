@@ -17,7 +17,7 @@ end_type    indicates how end_expo is calculated
 
 - for a successful nest with loggers end_expo is based on the logger data, i.e. on the precise time when parents left the nest with chicks, and estimated as last_ok minus one day (logger_min1day), or if we found both eggs and chicks in a nest (a partly hatched nest) end_expo is based on last_ok minus half a day (logger_minhalfday)
 
-- for a successful nest without loggers end_expo is based on the visit when all chicks were found in/near a nest and estimated as last_visit minus 1-day (visit_min1day), based on the visit where we found both eggs and chicks in a nest (a partly hatched nest) and estimated as last_visit minus 0.5 day (visit_minhalfday) or based on the expected date of hatching (hde), unless last_ok was after after expected hatch date as then end_expo represents last_ok plus one day (last_ok+1); note hde and last_ok+1 represent cases were tiny-eggshell pieces (indicating hatching) were found on the nest or parents were seen witch chicks of unknown age
+- for a successful nest without loggers end_expo is based on the visit when all chicks were found in/near a nest and estimated as last_visit minus 1-day (visit_min1day), based on the visit where we found both eggs and chicks in a nest (a partly hatched nest) and estimated as last_visit minus 0.5 day (visit_minhalfday) or based on the expected date of hatching (hde), unless last_ok was after expected hatch date as then end_expo represents last_ok plus one day (last_ok+1); note hde and last_ok+1 represent cases were tiny-eggshell pieces (indicating hatching) were found on the nest and/or parents were seen witch chicks of unknown age
 
 - for successful nests found at hatching start_expo = end_expo = last_visit; these nests are not used in the survival analyses (found_at_hatching)
 
@@ -45,7 +45,9 @@ predation_logger indicates the type of the datalogger used for the determination
 
 - "RFID_2" for nests monitored during the predation event only by the RFID device with both marked parents
 
+chicks_found indicates whether at least one chick assigned to the nest was ringed at any time after hatching ("yes") or not ("no")
 remarks adds additional information, e.g. whether the nest was 'deserted after partial predation', or we found 'egg remains on the nest' after the predation.
+
 
 
 temperatures.txt contains ground temperature measurements based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.

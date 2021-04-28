@@ -33,7 +33,7 @@
   source(here::here('R/prepare_data.R'))
 
   # dataset with dummy variable, to get the temperature-legend for a full range of temperature data
-    x1 = x[,.(date_num, time, temperature)]
+    x1 = x_[,.(date_num, time, temperature)]
     x2 = data.frame(date_num = c(1,1), time = c(12,12), temperature = c(min(a[, mean]),max(a[, mean]))   ) 
     xx = rbind(x1,x2)
 
@@ -93,7 +93,7 @@
 
 # (a) distribution of predation events across season
   ga = 
-    ggplot(x, aes(x = date_num, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
+    ggplot(x_, aes(x = date_num, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
       scale_x_continuous(expand = c(0, 0), name = "Day in year") + scale_y_continuous(expand = c(0, 0), name ="Predated nests", breaks = c(0,1,2))+#, labels = c("1.00", '2.00', '3.00'))+
       scale_fill_manual(values=c(day = day_, night = night_))+
       annotate("text", x=32, y=1, label= "[count]", size =7*(1/72 * 25.4), hjust = 0.5, angle = 90, colour="grey30") + 

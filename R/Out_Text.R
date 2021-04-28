@@ -166,6 +166,27 @@
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
+  # controlling for multiple clutching
+      yy[M_ID =="", M_ID := paste0('Mn', nest)]
+      yy[F_ID =="", F_ID := paste0('Fn', nest)]
+      yy[, pair_ID:=paste0(M_ID, F_ID)]
+      length(unique(yy$F_ID))
+      length(unique(yy$M_ID))
+      length(unique(yy$pair_ID))
+      summary(factor(yy$pair_ID))
+
+      table(data.frame(table(yy$pair_ID))$Freq)
+
+      table(data.frame(table(yy$F_ID))$Freq)
+
+      table(data.frame(table(yy$M_ID))$Freq)
+  
+      ma=glmer(cbind(failure,success)~1 + (1|M_ID) + (1|F_ID) + (1|pair_ID),family="binomial",data=yy)
+      ma=glmer(cbind(failure,success)~1 +  (1|pair_ID),family="binomial",data=yy)
+      bsim = sim(ma, n.sim=nsim)  
+      plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate
+      plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+      (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
 
   # not in the MS, but as a response to the reviewer - >5 days of exposure
       yyyy = yy[exposure>5]
@@ -215,20 +236,13 @@
         (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
         (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
         # predation rate for continuously monitored nests
-        w[ ,fate := 0]
-        w[ , max_stop :=max(stop), by = nest]
-        w[ stop == max_stop & nest %in% y[fate == 0 & end_type == 'logger', nest], fate :=1]
-        w[ , success := round(exposure - fate)]
-        w[fate==1, failure := 1]
-        w[is.na(failure), failure := 0]
-
         
-        ma=glm(cbind(failure,success)~1,family="binomial",data=w)
+        ma=glmer(cbind(failure,success)~1 + (1|nest),family="binomial",data=w)
         bsim = sim(ma, n.sim=nsim)  
-        plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
-        plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
-        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
-        (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
+        plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
+        plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+        (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
+        (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
          
   # continuously monitored
     length(unique(o$nest)) # N nests

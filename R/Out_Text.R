@@ -209,7 +209,7 @@
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100,2) # estimate
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100,2) #95%CI
       round((1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100) # total predation rate
-  # not in the MS, daily and total predation rate without unknown
+  # daily and total predation rate without unknown
       yyyy = yy[fate!=5]
       yyyy[ , success := round(exposure - fate_)]
       yyyy[fate_==1, failure := 1]

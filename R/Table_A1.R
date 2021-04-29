@@ -17,13 +17,14 @@
   night_ = 'grey30'
 
   source(here::here('R/prepare_data.R'))
-  yy = y[exposure>0]
-  yy[fate == 0, fate_:= 1]   # 1 predated works if swapped
-  yy[is.na(fate_), fate_:= 0]    # 0 all other
-  yy[, year_:= as.factor(year)] 
-  yy[ , success := round(exposure - fate_)]
-  yy[fate_==1, failure := 1]
-  yy[is.na(failure), failure := 0]
+    y = y[end_type!='found_at_hatching']
+    yy = y[exposure>0]
+    yy[fate == 0, fate_:= 1]   # 1 predated works if swapped
+    yy[is.na(fate_), fate_:= 0]    # 0 all other
+    yy[ , success := round(exposure - fate_)]
+    yy[fate_==1, failure := 1]
+    yy[is.na(failure), failure := 0]
+    yy[, year_:= as.factor(year)] 
 
 # daily predation rate according to Aebischer - logistic regression
   ma=glm(cbind(failure,success)~1,family="binomial",data=yy)

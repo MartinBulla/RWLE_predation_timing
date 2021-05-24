@@ -111,6 +111,8 @@
     nrow(y[end_type%in%c('half_rule')]) # predated at midpoint between last_ok and last_visit
     nrow(y[fate == 0 & end_type%in%c('last_ok+1')]) # predated last_ok +1 day
     
+    nrow(y[fate == 0 & predation_logger == 'RFID_1']) # nests with RFID based timing of predation and only one parent tagged
+
     nrow(y[fate %in% c(5) & end_type%in%c('visit', 'logger') & exposure > 0])# unknown fate
     nrow(y[fate %in% c(2) & end_type%in%c('visit', 'logger') & exposure > 0])# abandoned or failed for other reasons
 
@@ -139,6 +141,23 @@
         ggplot(x_, aes(y = date_num, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
         ggplot(x_, aes(x = date_num, y = midday_T, col = as.factor(year))) + stat_smooth(method = 'lm') + geom_point()
 
+    # Explore multiple sampling per pair/bird
+      x[M_ID =="", M_ID := paste0('Mn', nest)]
+      x[F_ID =="", F_ID := paste0('Fn', nest)]
+      x[, pair_ID:=paste0(M_ID, F_ID)]
+
+      table(x$F_ID)
+      length(unique(x$F_ID))
+      length(unique(x$M_ID))
+      length(unique(x$pair_ID))
+      summary(factor(x$pair_ID))
+
+      table(data.frame(table(x$pair_ID))$Freq)
+
+      table(data.frame(table(x$F_ID))$Freq)
+
+      table(data.frame(table(x$M_ID))$Freq)     
+
 # Outputs - Results  
  
   # all
@@ -152,13 +171,31 @@
     round(median(yy$exposure),2); round(mean(yy$exposure),2);  round(range(yy$exposure),2) 
     y$exposure[y$exposure>35]
      
-  # daily and total predation rate
+  # daily and total predation rate 
       ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
       bsim = sim(ma, n.sim=nsim)  
       load('Data/DPR_sim.Rdata') # loads one specific simulations that gave the results shown in the MS
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
+
+  # not in the MS (used as a response to reviewers) daily and total with hatched based on eggshells as unknown
+      yyx = copy(yy)
+      yyx[fate == 1 & chicks_found == 'no', exposure := as.numeric(difftime(last_ok, start_expo, units = 'days'))]
+
+      yyx = yyx[exposure>0]
+      yyx[fate == 0, fate_:= 1]   # 1 predated works if swapped
+      yyx[is.na(fate_), fate_:= 0]    # 0 all other
+      yyx[ , success := round(exposure - fate_)]
+      yyx[fate_==1, failure := 1]
+      yyx[is.na(failure), failure := 0]
+
+      ma=glm(cbind(failure,success)~1,family="binomial",data=yyx)
+      bsim = sim(ma, n.sim=nsim)  
+      plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate
+      plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+      (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
+
   # daily predation rate capping the extreme observation periods at 30 days
       nrow(yy[exposure>30]) # N nests with long observation periods  
       ma=glm(cbind(failure,success)~1,family="binomial",data=yyy)
@@ -180,9 +217,23 @@
       table(data.frame(table(yy$F_ID))$Freq)
 
       table(data.frame(table(yy$M_ID))$Freq)
+
+      # multiple bird ids - response to reviewers
+        bird = data.table(bird = c(yy$F_ID[yy$F_ID!=""],yy$M_ID[yy$M_ID!=""]))
+        bird_N = bird[, .N, by = bird] 
+        summary(bird_N)
+        ggplot(bird_N, aes(x = N)) + geom_histogram()
+        nrow(bird_N[N<2])/nrow(bird_N)
+        nrow(bird_N[N==2])/nrow(bird_N)
+        nrow(bird_N[N<3])/nrow(bird_N)
+        nrow(bird_N[N==3])/nrow(bird_N)
+        nrow(bird_N[N==4])/nrow(bird_N)
+        nrow(bird_N[N>4])/nrow(bird_N)
   
       ma=glmer(cbind(failure,success)~1 + (1|M_ID) + (1|F_ID) + (1|pair_ID),family="binomial",data=yy)
+      ma=glmer(cbind(failure,success)~1 + mid_j + (1|M_ID) + (1|F_ID) + (1|pair_ID),family="binomial",data=yy)
       ma=glmer(cbind(failure,success)~1 +  (1|pair_ID),family="binomial",data=yy)
+      ma=glmer(cbind(failure,success)~1 +  mid_j + (1|pair_ID),family="binomial",data=yy)
       bsim = sim(ma, n.sim=nsim)  
       plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate
       plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
@@ -237,12 +288,23 @@
         (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
         # predation rate for continuously monitored nests
         
-        ma=glmer(cbind(failure,success)~1 + (1|nest),family="binomial",data=w)
+        ma=glmer(cbind(failure,success)~1 + (1|nest),family="binomial",data=w) # gives nonsensical output
         bsim = sim(ma, n.sim=nsim)  
         plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
         plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
         (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
         (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
+  # not in the MS, predation rate for continuously monitored nests only
+      yyyy = yy[nest %in%o$nest]
+      yyyy[ , success := round(exposure - fate_)]
+      yyyy[fate_==1, failure := 1]
+      yyyy[is.na(failure), failure := 0] 
+
+      ma=glm(cbind(failure,success)~1,family="binomial",data=yyyy)
+      bsim = sim(ma, n.sim=nsim)  
+      round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100,2) # estimate
+      round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100,2) #95%CI
+      round((1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100) # total predation rate
          
   # continuously monitored
     length(unique(o$nest)) # N nests
@@ -265,26 +327,26 @@
      x_[, diff := as.numeric(difftime(exp_hatch, end_expo, units = 'days'))]
      x_[,.(nest,exposure, first_egg,exp_hatch,end_expo, diff)]
 
-# Explore how T at predation relates to season and mid-day T 
-    ggplot(x_, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
-    ggplot(x_, aes(y = temperature, x = date_num)) + stat_smooth(method = 'lm') + geom_point()
+  # Explore how T at predation relates to season and mid-day T 
+      ggplot(x_, aes(y = temperature, x = midday_T)) + stat_smooth(method = 'lm') + geom_point()
+      ggplot(x_, aes(y = temperature, x = date_num)) + stat_smooth(method = 'lm') + geom_point()
 
-    m = lm(temperature ~ midday_T,data=x_)
-    m = lm(temperature ~ date_num,data=x_)
-    summary(m)
+      m = lm(temperature ~ midday_T,data=x_)
+      m = lm(temperature ~ date_num,data=x_)
+      summary(m)
 
-# Data checking   
-    nrow(y[start_expo==end_expo])
-    xx = y[start_expo==end_expo]
-    xtabs(~xx$fate+xx$end_type)
+  # Data checking   
+      nrow(y[start_expo==end_expo])
+      xx = y[start_expo==end_expo]
+      xtabs(~xx$fate+xx$end_type)
 
-    nrow(y[start_expo==last_ok])
-    nrow(y[start_expo==last_ok & fate%in%c(0,1)])
+      nrow(y[start_expo==last_ok])
+      nrow(y[start_expo==last_ok & fate%in%c(0,1)])
 
-    nrow(y[start_expo!=last_ok & fate%in%c(0) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 10])
-    nrow(y[start_expo!=last_ok & fate%in%c(1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 10])
-    nrow(y[start_expo!=last_ok & fate%in%c(1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 5])
-    nrow(y[start_expo!=last_ok & fate%in%c(0,1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 5])
+      nrow(y[start_expo!=last_ok & fate%in%c(0) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 10])
+      nrow(y[start_expo!=last_ok & fate%in%c(1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 10])
+      nrow(y[start_expo!=last_ok & fate%in%c(1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 5])
+      nrow(y[start_expo!=last_ok & fate%in%c(0,1) & as.numeric(difftime(last_visit,last_ok, units = 'days')) > 5])
 
 # sessionInfo()
  #R version 4.0.2 (2020-06-22)

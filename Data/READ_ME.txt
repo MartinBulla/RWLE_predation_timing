@@ -45,7 +45,9 @@ predation_logger indicates the type of the datalogger used for the determination
 
 - "RFID_2" for nests monitored during the predation event only by the RFID device with both marked parents
 
-chicks_found indicates whether at least one chick assigned to the nest was ringed at any time after hatching ("yes") or not ("no")
+M_ID indicates identity of male for nests with ringed male
+F_ID indicates identity of female for nests with ringed female
+chicks_found indicates whether at least one chick was found during the "final_nest_check", "later", or "no" chick was assigned to the nest
 remarks adds additional information, e.g. whether the nest was 'deserted after partial predation', or we found 'egg remains on the nest' after the predation.
 
 

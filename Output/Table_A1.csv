@@ -1,7 +1,0 @@
-model,response,error_structure,N,type,effect,estimate_r,lwr_r,upr_r,AICc,deltaAICc,prob,ER
-(a) Original scale,Predated vs success days,binomial,444,fixed,(Intercept),0.95%,0.76%,1.18%,"","","",""
-(b) Original scale,Predated vs success days,binomial,444,fixed,(Intercept),1.18%,0.55%,2.47%,"","","",""
-"","","","",fixed,mid_j,49.95%,49.8%,50.11%,"","","",""
-(a) Binomial scale,Predated vs success days,binomial,444,fixed,(Intercept),-4.65,-4.89,-4.42,615.86,0,0.7,1
-(b) Binomial scale,Predated vs success days,binomial,444,fixed,(Intercept),-4.44,-5.19,-3.67,617.54,1.68,0.3,2.33
-"","","","",fixed,mid_j,0,-0.01,0,"","","",""

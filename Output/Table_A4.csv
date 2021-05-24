@@ -1,0 +1,31 @@
+model,response,error_structure,N,type,effect,estimate_r,lwr_r,upr_r
+(a) Season,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-3.195,-6.058,-0.419
+"","","","",fixed,date_num,0.024,0.004,0.045
+(a) Season,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.202,-0.746,0.333
+"","","","",fixed,date_num,0.005,0.001,0.009
+(b) Midday T,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-5.629,-11.149,-0.331
+"","","","",fixed,midday_T,0.117,0.008,0.23
+(b) Midday T,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.717,-1.823,0.395
+"","","","",fixed,midday_T,0.026,0.002,0.049
+(c) Midday T + date,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-3.461,-9.5,2.657
+"","","","",fixed,midday_T,0.01,-0.19,0.21
+"","","","",fixed,date_num,0.023,-0.015,0.06
+(c) Midday T + date,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.276,-1.597,1.056
+"","","","",fixed,midday_T,0.002,-0.042,0.048
+"","","","",fixed,date_num,0.005,-0.003,0.013
+(d) res T + date,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-3.229,-5.966,-0.489
+"","","","",fixed,res_T,0.01,-0.19,0.208
+"","","","",fixed,date_num,0.025,0.004,0.044
+(d) res T + date,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.199,-0.743,0.344
+"","","","",fixed,res_T,0.002,-0.042,0.047
+"","","","",fixed,date_num,0.005,0.001,0.009
+(e) res date + T,"Night predation (0, 1)",binomial,25,fixed,(Intercept),-5.678,-10.952,-0.431
+"","","","",fixed,res_D,0.023,-0.015,0.06
+"","","","",fixed,midday_T,0.118,0.011,0.227
+(e) res date + T,"Night predation (0, 1)",Gaussian,25,fixed,(Intercept),-0.733,-1.766,0.281
+"","","","",fixed,res_D,0.005,-0.002,0.013
+"","","","",fixed,midday_T,0.026,0.005,0.047
+(f) Residual T,Midday T,Gaussian,25,fixed,(Intercept),26.9,21.61,32.14
+"","","","",fixed,date_num,0.16,0.12,0.2
+(g) Residual date,Date,Gaussian,25,fixed,(Intercept),-94.24,-152.61,-38.65
+"","","","",fixed,midday_T,4.7,3.53,5.9

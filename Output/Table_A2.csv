@@ -1,11 +1,7 @@
-model,response,error_structure,N,type,effect,estimate_r,lwr_r,upr_r
-(a) Time of day,Predation per hour,Poisson,24,fixed,(Intercept),-0.083,-0.529,0.353
-"","","","",fixed,sin(rad),0.529,-0.066,1.121
-"","","","",fixed,cos(rad),0.479,-0.117,1.08
-(a) Time of day,Predation per hour,Gaussian,24,fixed,(Intercept),1.051,0.488,1.619
-"","","","",fixed,sin(rad),0.519,-0.262,1.323
-"","","","",fixed,cos(rad),0.463,-0.32,1.268
-(b) Time relative to sunrise,Predation per hour,Poisson,23,fixed,(Intercept),0.686,0.034,1.352
-"","","","",fixed,abs(time_from_sunrise_r),-0.119,-0.242,0.001
-(b) Time relative to sunrise,Predation per hour,Gaussian,23,fixed,(Intercept),1.821,0.821,2.794
-"","","","",fixed,abs(time_from_sunrise_r),-0.126,-0.271,0.02
+model,response,error_structure,N,type,effect,estimate_r,lwr_r,upr_r,AICc,deltaAICc,prob,ER
+(a) Original scale,Predated vs success days,binomial,444,fixed,(Intercept),0.95%,0.76%,1.18%,"","","",""
+(b) Original scale,Predated vs success days,binomial,444,fixed,(Intercept),1.18%,0.55%,2.47%,"","","",""
+"","","","",fixed,mid_j,49.95%,49.8%,50.11%,"","","",""
+(a) Binomial scale,Predated vs success days,binomial,444,fixed,(Intercept),-4.65,-4.89,-4.42,615.86,0,0.7,1
+(b) Binomial scale,Predated vs success days,binomial,444,fixed,(Intercept),-4.44,-5.19,-3.67,617.54,1.68,0.3,2.33
+"","","","",fixed,mid_j,0,-0.01,0,"","","",""

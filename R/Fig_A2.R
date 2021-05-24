@@ -3,7 +3,8 @@
 # pattern changes across season in a subtropical shorebird
 # Contributor: Martin Bulla
 # 📍 This script runs relative to the project's root directory and generates
-# Figure 1
+# Figure A2. The script uses dataset that was prepared by 
+# prepare_data_eBird.R script from dataset provided by eBird
 # ==========================================================================
 
 # LOAD TOOLS and DATA
@@ -33,6 +34,11 @@
   a = a[day_j<201 & day_j>49]
   a[n =='X', n :=1]
   a[,n := as.numeric(n)]
+  nrow(a[n==1])/nrow(a)
+  nrow(a[n<3])/nrow(a)
+  nrow(a[n>10])/nrow(a)
+
+  ggplot(a, aes(x = n)) + geom_histogram() + scale_x_continuous(trans='log10')
 
 # PLOT
   g = ggplot(a, aes(x = day_j, fill = genus)) + geom_histogram() + 

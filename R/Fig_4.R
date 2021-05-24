@@ -66,7 +66,7 @@
       geom_jitter(data = xx[night_num == 1] , aes(y = night_num, x = midday_T,fill = temperature), width = 0, height = 0.025,  col = point_out2, pch = 21) + 
       #geom_jitter(aes(x = midday_T, y = night_num,  fill = temperature), data = xx, shape=21, col = point_out) +
       scale_fill_viridis_c(option = "plasma", name = "°C\nwhen\npredated") +
-      scale_x_continuous(expand = c(0, 0), lim = c(30,60),  name = "Mid-day T [°C]") +
+      scale_x_continuous(expand = c(0, 0), lim = c(30,60),  name = "Mid-day temperature [°C]") +
       scale_y_continuous(  name = "Probability of night predation") +
       coord_cartesian(xlim = c(30,61), clip = 'off') + 
       #labs(tag = "(c)") +

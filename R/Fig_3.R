@@ -94,9 +94,9 @@
 # (a) distribution of predation events across season
   ga = 
     ggplot(x_, aes(x = date_num, fill = night)) + geom_histogram(binwidth = 1, center = 0.5) + 
-      scale_x_continuous(expand = c(0, 0), name = "Day in year") + scale_y_continuous(expand = c(0, 0), name ="Predated nests", breaks = c(0,1,2))+#, labels = c("1.00", '2.00', '3.00'))+
+      scale_x_continuous(expand = c(0, 0), name = "Day in year") + scale_y_continuous(expand = c(0, 0), name ="Predated", breaks = c(0,1,2))+#, labels = c("1.00", '2.00', '3.00'))+
       scale_fill_manual(values=c(day = day_, night = night_))+
-      annotate("text", x=32, y=1, label= "[count]", size =7*(1/72 * 25.4), hjust = 0.5, angle = 90, colour="grey30") + 
+      annotate("text", x=32, y=1, label= "nests", size =7*(1/72 * 25.4), hjust = 0.5, angle = 90, colour="grey30") + 
       coord_cartesian(xlim = c(50,200), clip = 'off') +                
       theme_MB +
       #labs(tag = "(a)") +

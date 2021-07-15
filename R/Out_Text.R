@@ -238,6 +238,30 @@
       plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate
       plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
+  # using only first nests within the year for know individuals
+      ym = yy[!M_ID%in%c("")]
+      table(ym$year, ym$M_ID)
+      ym[,first_nest := nest[first_egg == min(first_egg)], by = list(year, M_ID)]
+      ym1 = ym[nest == first_nest]
+
+      yf = yy[!F_ID%in%c("")]
+      yf[,first_nest := nest[first_egg == min(first_egg)], by = list(year, F_ID)]
+      yf1 = yf[nest == first_nest]
+
+      ymf = rbind(ym,yf)
+      nrow(ymf)
+      ymfc = ymf[!duplicated(ymf)]
+      nrow(ymfc)
+      ymfc$first_nest = NULL
+
+      yy1 = rbind(ymfc, yy[M_ID%in%c("") & F_ID%in%c("")])
+
+      myy1=glm(cbind(failure,success)~1,family="binomial",data=yy1)
+      bsim = sim(myy1, n.sim=nsim)  
+      plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate
+      plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+      (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
+
 
   # not in the MS, but as a response to the reviewer - >5 days of exposure
       yyyy = yy[exposure>5]

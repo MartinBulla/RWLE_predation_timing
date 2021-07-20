@@ -4,7 +4,7 @@ by Martin Sládeček and Martin Bulla
 
 ### **Overview**
 
-Data, codes and outputs of the analyses for the [Diel timing of nest predation changes across breeding season in a subtropical shorebird](https://doi.org/10.22541/au.160991969.96235686/v1)
+Data, codes and outputs of the analyses in [Diel timing of nest predation changes across breeding season in a subtropical shorebird](https://doi.org/10.22541/au.160991969.96235686/v1)
 
 ### **Folders and files**
 

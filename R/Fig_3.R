@@ -175,7 +175,8 @@
   ggL = ggarrange(blank, legend, blank, nrow=3, heights=c(1, 4, 4.45))
   ggAll = ggarrange(ggA, ggL, ncol=2, widths=c(4, 0.45))
 
-  ggsave(file = 'Output/Fig_3_width-7cm.png', ggAll, dpi = 300, width = 7, height = 12.5, units = 'cm')
+  ggsave(file = 'Output/Fig_3_width-7cm.jpeg', ggAll, dpi = 300, width = 7, height = 12.5, units = 'cm')
+  #ggsave(file = 'Output/Fig_3_width-7cm.png', ggAll, dpi = 300, width = 7, height = 12.5, units = 'cm')
     #ggExtra::ggMarginal(gg, type = "histogram")#, groupColour = TRUE)
 
 # sessionInfo()

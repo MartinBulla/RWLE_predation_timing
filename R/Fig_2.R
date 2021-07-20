@@ -59,7 +59,8 @@
           legend, ncol = 2, widths=c(5,0.5)
           )
 
-  ggsave(file = 'Output/Fig_2_width-8cm.png', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
+  ggsave(file = 'Output/Fig_2_width-8cm.jpeg', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
+  #ggsave(file = 'Output/Fig_2_width-8cm.png', ggALL, dpi = 300, width = 8, height = 4, units = 'cm')    
 
 # sessionInfo()
   #R version 4.0.2 (2020-06-22)

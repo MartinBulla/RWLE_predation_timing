@@ -31,6 +31,7 @@
             legend.text=element_text(size=5),
             legend.title=element_text(size=6, hjust = 0.5)
             )
+   ggsave(file = 'Output/Fig_1_width-7cm.jpeg', gg, dpi = 300, width = 7, height = 8, units = 'cm')
    ggsave(file = 'Output/Fig_1_width-7cm.png', gg, dpi = 300, width = 7, height = 8, units = 'cm')
 
 # sessionInfo()

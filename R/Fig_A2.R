@@ -24,7 +24,7 @@
   }
 
   a=fread("Data/potential_predators_ebird.txt")
-  names(a) = c('pk', 'name','scinam','n','country', 'site_ID','lat','lon','date','time','comments','day_j','month')
+  names(a) = c('pk', 'name','scinam','n','country', 'site_ID','lat','lon','date','time','comments','month','day_j','Migrant')
   summary(factor(a$name))
   unique(a$scinam)
   unique(a$name)
@@ -38,21 +38,22 @@
   nrow(a[n<3])/nrow(a)
   nrow(a[n>10])/nrow(a)
 
-  ggplot(a, aes(x = n)) + geom_histogram() + scale_x_continuous(trans='log10')
+  #ggplot(a, aes(x = n)) + geom_histogram() + scale_x_continuous(trans='log10')
 
 # PLOT
-  g = ggplot(a, aes(x = day_j, fill = genus)) + geom_histogram() + 
+  g = ggplot(a, aes(x = day_j, fill = Migrant)) + geom_histogram() + 
     ylim(c(0,15)) +
     ylab('# of observation') + 
     xlab('Day of the year') + 
     facet_wrap(~genus, ncol = 7) + 
-    theme_MB + theme(legend.position = "none") 
+    theme_MB + scale_fill_manual(values=c("#E69F00", "#56B4E9"),  guide = guide_legend(reverse = TRUE))
+    #+ theme(legend.position = "none") 
   g_tab <- ggplotGrob(g)
   #g_tab$layout$name
   g_filtered <- gtable_filter_remove(g_tab, name = paste0("axis-b-", c(2, 4, 6), "-3"), trim = FALSE)
   #grid.newpage()
   grid.draw(g_filtered)
-  ggsave(file = 'Output/Fig_predators_hist.png',arrangeGrob(g_filtered), width = 12, height =6, units = 'cm')
+  ggsave(file = 'Output/Fig_A2_width-14cm.jpeg',arrangeGrob(g_filtered), dpi = 300, width = 14, height =7, units = 'cm')
   
 # other
   ggplot(a, aes(x = day_j, col = name)) + geom_density()

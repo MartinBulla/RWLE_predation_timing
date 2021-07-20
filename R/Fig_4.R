@@ -76,7 +76,8 @@
             legend.title=element_text(size=6, hjust = 0.5)
             )
 
-   ggsave(file = 'Output/Fig_4_width-7cm.png', gg, dpi = 300, width = 7, height = 12.5* 4.45/9.45, units = 'cm')
+   ggsave(file = 'Output/Fig_4_width-7cm.jpeg', gg, dpi = 300, width = 7, height = 12.5* 4.45/9.45, units = 'cm')
+   #ggsave(file = 'Output/Fig_4_width-7cm.png', gg, dpi = 300, width = 7, height = 12.5* 4.45/9.45, units = 'cm')
     
 
 # sessionInfo()  

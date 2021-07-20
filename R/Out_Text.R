@@ -59,7 +59,7 @@
         ma=glm(cbind(failure,success)~1,family="binomial",data=yy)
         bsim = sim(ma, n.sim=nsim)  
         #save(file = 'Data/DPR_sim.Rdata', bsim)
-        load('Data/DPR_sim.Rdata')
+        load('Output/DPR_sim.Rdata')
         plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
         plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
 

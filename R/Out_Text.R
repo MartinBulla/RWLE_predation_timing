@@ -261,8 +261,80 @@
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
+  # not in the MS, but as a response to the reviewer - checking effect across multiple clutches
+      yc = yy[-which(M_ID =="" & F_ID =="")]
 
+      ym = yc[M_ID != ""] 
+      table(ym$year, ym$M_ID)
+      ym = ym[order(first_egg)]
+      ym[,year_order := 1:length(first_egg), by = list(year, M_ID)]
+      #ym[M_ID == '68_2018']
 
+      yf = yc[!F_ID%in%c("")]
+      yf = yf[order(first_egg)]
+      yf[,year_order := 1:length(first_egg), by = list(year, F_ID)]
+      
+
+      ym$year_order_F = yf$year_order[match(ym$nest, yf$nest)]
+      ym1 = ym[is.na(year_order_F)]
+      ym2 = ym[!is.na(year_order_F)]
+
+      yf$year_order_M = ym$year_order[match(yf$nest, ym$nest)]
+      yf1 = yf[is.na(year_order_M)]
+      yf2 = yf[!is.na(year_order_M)]
+
+      nrow(ym2[!nest%in%yf2$nest])
+      nrow(yf2[!nest%in%ym2$nest])
+
+      ym2[year_order_F>year_order, year_order := year_order_F]
+      yf2[year_order_M>year_order, year_order := year_order_M]
+
+      # check OK
+        #ym2$year_order_corrected = yf2$year_order[match(ym2$nest, yf2$nest)]
+        #ym2[year_order!=year_order_corrected]
+       
+      # combine
+        ym1$year_order_F = NULL
+        ym2$year_order_F = NULL
+        yf1$year_order_M = NULL
+        ymf = rbind(ym2,ym1,yf1)
+
+      ymf[M_ID =="", M_ID := paste0('Mn', F_ID)]
+      ymf[F_ID =="", F_ID := paste0('Fn', M_ID)]
+      ymf[, pair_ID:=paste0(M_ID, F_ID)]
+
+      nrow(ymf)
+      summary(factor(ymf$year_order))
+      table(data.frame(table(ymf$pair_ID))$Freq)
+      table(data.frame(table(ymf$F_ID))$Freq)
+      table(data.frame(table(ymf$M_ID))$Freq)
+
+      ymf[, year_order_f := as.factor(year_order)]
+
+      ymf[year_order>3, year_order_4 := 4]
+      ymf[!year_order>3, year_order_4 := year_order]
+      ymf[, year_order_4f := as.factor(year_order_4)]
+      ymf[year_order>2, year_order_3 := 3]
+      ymf[!year_order>2, year_order_3 := year_order]
+      ymf[, year_order_3f := as.factor(year_order_3)]
+      summary(ymf$year_order_f)
+      summary(ymf$year_order_4f)
+      summary(ymf$year_order_3f)
+
+      ma=glmer(cbind(failure,success)~year_order_f + (1|M_ID) + (1|F_ID) + (1|pair_ID),family="binomial",data=ymf)
+
+      ma=glmer(cbind(failure,success)~year_order_4f + (1|M_ID) + (1|F_ID) + (1|pair_ID),family="binomial",data=ymf)
+
+      ma=glmer(cbind(failure,success)~year_order_3f + (1|M_ID) + (1|F_ID) + (1|pair_ID),family="binomial",data=ymf)
+
+      summary(ma)
+      summary(glht(ma))
+      plot(allEffects(ma))
+      bsim = sim(ma, n.sim=nsim)  
+
+      plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5)))*100 # estimate
+      plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
+      (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100 # total predation rate
   # not in the MS, but as a response to the reviewer - >5 days of exposure
       yyyy = yy[exposure>5]
       yyyy[ , success := round(exposure - fate_)]
@@ -273,7 +345,7 @@
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100 # estimate - daily
       plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
       (1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate 
-  # not in the MS, daily predation rate without nests predated after estimated hatch date
+  # not in the MS, but as a response to the reviewer - daily predation rate without nests predated after estimated hatch date
       yyyy = yy[-which(fate == 0 & end_type%in%c('last_ok+1'))]
       yyyy[ , success := round(exposure - fate_)]
       yyyy[fate_==1, failure := 1]
@@ -295,7 +367,7 @@
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.5)))*100,2) # estimate
       round(plogis(apply(bsim@coef, 2, quantile, prob=c(0.025,0.975)))*100,2) #95%CI
       round((1-(1-plogis(apply(bsim@coef, 2, quantile, prob=c(0.5,0.025,0.975 ))))^30)*100) # total predation rate
-  # not in the MS, predation rate for continuously monitored period only
+  # not in the MS, but as a response to the reviewer - predation rate for continuously monitored period only
         w[ ,fate := 0]
         w[ , max_stop :=max(stop), by = nest]
         w[ stop == max_stop & nest %in% y[fate == 0 & end_type == 'logger', nest], fate :=1]
@@ -318,7 +390,7 @@
         plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025,0.975)))*100 #95%CI
         (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.5))))^30)*100  # total predation rate
         (1-(1-plogis(apply(bsim@fixef, 2, quantile, prob=c(0.025, 0.975))))^30)*100  # total predation rate
-  # not in the MS, predation rate for continuously monitored nests only
+  # not in the MS, but as a response to the reviewer - predation rate for continuously monitored nests only
       yyyy = yy[nest %in%o$nest]
       yyyy[ , success := round(exposure - fate_)]
       yyyy[fate_==1, failure := 1]

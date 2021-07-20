@@ -9,7 +9,7 @@ Data, codes and outputs of the analyses.
 ### **Folders and files**
 
 [Data](Data/): all data used in the analyses
-- READ_ME.txt - column definitions for each of the three datasets
+- READ_ME.txt - column definitions for each of the four datasets
 - nests_data.txt - information on each nest used in the paper
 - logger_data.txt - information about each logger placed on each nest
 - temperatures.txt - ground temperature measurements based on all ground temperature recordings (next to the nests) from the given hour in the whole study area.
@@ -19,7 +19,7 @@ Data, codes and outputs of the analyses.
 - tools.R loads functions and packages used in the other R-scripts (needs to be always loaded before running the other scripts)
 - prepare_data.R prepares the main datasets (but only after tools.R is loaded)
 - prepare_logger_data_intersections.R generates periods, for which each nest was continuously recorded with one or more devices (to run, need tools.R loaded)
-- Out_Text scripts generates written outputs (e.g sample sizes, estimates) for the text - Abstract, Introduction, Method, and Results
+- Out_Text.R script generates written outputs (e.g sample sizes, estimates) for the text - Abstract, Introduction, Method, and Results
 - Fig scripts generate Figures
 - Table scripts generate Tables
 

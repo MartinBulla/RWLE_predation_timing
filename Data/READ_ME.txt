@@ -66,3 +66,16 @@ datetime_start    date and time when the logger started on the nest (yyyy-mm-dd 
 datetime_end   date and time when the logger ended on the nest (yyyy-mm-dd hh:mm:ss)
 logger      indicates type of the logger: dht (CZU designed temperature and humidity logger measuring in 1s intervals), dvr (video recorder), lup_egg, rfid (Max Planck designed), tnt (TinyTag temperature logger recording at 1min interval), zajda_rfid (CZU designed rfid with temperature and humidity measurements), zajda_thm
 length  period (in days), for which the logger was recording on the nest
+
+potential_predators_ebird.txt contains bird observations in the Dubai area acquired from eBird 2020
+COMMON.NAME of the species
+SCIENTIFIC.NAME of the species
+OBSERVATION.COUNT number of observed individuals, or "X" when the count was not defined
+LATITUDE of the observation
+LONGITUDE of the observation
+DATE of the observation
+MONTH of the year
+DAY of the year
+MIGRANT define whether occurence of the species in Dubai is migratory ("yes"), or not ("no")
+
+

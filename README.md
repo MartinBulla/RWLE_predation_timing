@@ -6,7 +6,7 @@ by [Martin Sládeček](slava.laguna.os@volny.cz) and [Martin Bulla](bulla.mar@gm
 
 Data, codes and outputs of the analyses in [Diel timing of nest predation changes across breeding season in a subtropical shorebird](https://doi.org/10.22541/au.162218472.26998411/v1)
 
-When using any of the materials, **PLEASE CITE** the [original paper][https://doi.org/10.22541/au.160991969.96235686/v1] and this [Supporting information][2].
+When using any of the materials, **PLEASE CITE** the [original paper](https://doi.org/10.22541/au.162218472.26998411/v1) and this [Supporting information](https://osf.io/bq4dr/).
 
 **Before** **using** the data and scripts we recommend **read**ing the **[paper](https://doi.org/10.22541/au.162218472.26998411/v1)** and the information below
 

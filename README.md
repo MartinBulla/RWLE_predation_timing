@@ -1,6 +1,6 @@
 ## Timing of predation in red-wattled lapwings *Vanellus indicus*
 
-by Martin Sládeček and Martin Bulla
+by [Martin Sládeček](slava.laguna.os@volny.cz) and [Martin Bulla](bulla.mar@gmail.com)
 
 ### **Overview**
 
